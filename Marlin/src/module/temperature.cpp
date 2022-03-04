@@ -2699,6 +2699,9 @@ void Temperature::init() {
   #endif
   #if ENABLED(USE_CONTROLLER_FAN)
     INIT_FAN_PIN(CONTROLLER_FAN_PIN);
+    #if PIN_EXISTS(CONTROLLER_FAN2)
+      INIT_FAN_PIN(CONTROLLER_FAN2_PIN);
+    #endif
   #endif
 
   TERN_(HAS_MAXTC_SW_SPI, max_tc_spi.init());
@@ -3570,7 +3573,10 @@ void Temperature::isr() {
           if (soft_pwm_count_fan[7] <= pwm_count_tmp) WRITE_FAN(7, LOW);
         #endif
         #if ENABLED(USE_CONTROLLER_FAN)
-          if (soft_pwm_controller.count <= pwm_count_tmp) WRITE(CONTROLLER_FAN_PIN, LOW);
+          if (soft_pwm_controller.count <= pwm_count_tmp) {
+            WRITE(CONTROLLER_FAN_PIN, LOW);
+            WRITE(CONTROLLER_FAN2_PIN, LOW);
+          }
         #endif
       #endif
     }
