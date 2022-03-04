@@ -1461,6 +1461,9 @@
   // Display a negative temperature instead of "err"
   //#define SHOW_TEMPERATURE_BELOW_ZERO
 
+  // Show the position of secondary axes I[J[K]] instead of icons. Incompatible with LCD_SHOW_SECONDARY_AXES
+  //#define LCD_SHOW_SECONDARY_AXES
+
   /**
    * LED Control Menu
    * Add LED Control to the LCD menu
