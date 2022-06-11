@@ -344,6 +344,12 @@ public:
 
   static bool using_inch_units() { return mm_to_linear_unit(1.0f) != 1.0f; }
 
+  #if ROTATIONAL_AXES
+    #define IS_ROTATIONAL(V) parser.is_rotational(V)
+  #else 
+    #define IS_ROTATIONAL(V) false
+  #endif
+
   #define IN_TO_MM(I)        ((I) * 25.4f)
   #define MM_TO_IN(M)        ((M) / 25.4f)
   #define LINEAR_UNIT(V)     parser.mm_to_linear_unit(V)

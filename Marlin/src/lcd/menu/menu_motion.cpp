@@ -170,9 +170,6 @@ void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int
     SUBMENU(MSG_MOVE_01IN,   []{ _goto_manual_move(IN_TO_MM(0.100f)); });
     SUBMENU(MSG_MOVE_001IN,  []{ _goto_manual_move(IN_TO_MM(0.010f)); });
     SUBMENU(MSG_MOVE_0001IN, []{ _goto_manual_move(IN_TO_MM(0.001f)); });
-  }
-  else {
-    if (HAS_LARGE_MOVES) {
       SUBMENU(MSG_MOVE_100MM, []{ _goto_manual_move(100); });
       SUBMENU(MSG_MOVE_50MM, []{ _goto_manual_move(50); });
     }
