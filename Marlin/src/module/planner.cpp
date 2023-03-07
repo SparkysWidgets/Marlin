@@ -159,6 +159,10 @@ float Planner::mm_per_step[DISTINCT_AXES];      // (mm) Millimeters per step
   bool Planner::abort_on_endstop_hit = false;
 #endif
 
+#if ENABLED(ABORT_ON_SOFTWARE_ENDSTOP)
+  bool Planner::abort_on_software_endstop = false;
+#endif
+
 #if ENABLED(DISTINCT_E_FACTORS)
   uint8_t Planner::last_extruder = 0;     // Respond to extruder change
 #endif
@@ -1432,6 +1436,7 @@ void Planner::check_axes_activity() {
 
   #if ENABLED(AUTOTEMP_PROPORTIONAL)
     void Planner::_autotemp_update_from_hotend() {
+      if (active_extruder >= EXTRUDERS) return;
       const celsius_t target = thermalManager.degTargetHotend(active_extruder);
       autotemp.min = target + AUTOTEMP_MIN_P;
       autotemp.max = target + AUTOTEMP_MAX_P;
@@ -1473,6 +1478,7 @@ void Planner::check_axes_activity() {
   void Planner::autotemp_task() {
     static float oldt = 0.0f;
 
+    if (active_extruder >= EXTRUDERS) return;
     if (!autotemp.enabled) return;
     if (thermalManager.degTargetHotend(active_extruder) < autotemp.min - 2) return; // Below the min?
 
@@ -3106,9 +3112,6 @@ bool Planner::buffer_line(const xyze_pos_t &cart, const_feedRate_t fr_mm_s
       cart.i - position_cart.i, cart.j - position_cart.j, cart.k - position_cart.k,
       cart.u - position_cart.u, cart.v - position_cart.v, cart.w - position_cart.w
     );
-
-    // Cartesian XYZ to kinematic ABC, stored in global 'delta'
-    inverse_kinematics(machine);
 
     PlannerHints ph = hints;
     if (!hints.millimeters)

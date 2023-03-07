@@ -92,7 +92,7 @@ public:
 
     static bool set_deployed(const bool deploy);
 
-    #if IS_KINEMATIC
+    #if IS_KINEMATIC && DISABLED(PENTA_AXIS_HT) && DISABLED(PENTA_AXIS_TRT)
 
       #if HAS_PROBE_XY_OFFSET
         // Return true if the both nozzle and the probe can reach the given point.

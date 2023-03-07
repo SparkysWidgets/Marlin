@@ -395,12 +395,15 @@
   #endif
 #endif
 
-// Offset of the extruders (uncomment if using more than one and relying on firmware to position when changing).
-// The offset has to be X=0, Y=0 for the extruder 0 hotend (default extruder).
-// For the other hotends it is their distance from the extruder 0 hotend.
-//#define HOTEND_OFFSET_X { 0.0, 20.00 } // (mm) relative X-offset for each nozzle
-//#define HOTEND_OFFSET_Y { 0.0, 5.00 }  // (mm) relative Y-offset for each nozzle
-//#define HOTEND_OFFSET_Z { 0.0, 0.00 }  // (mm) relative Z-offset for each nozzle
+/**
+ * Offset of the extruders (uncomment if using more than one and relying on firmware to position when changing).
+ * The offset has to be X=0, Y=0 for the extruder 0 hotend (default extruder).
+ * For the other hotends it is their distance from the extruder 0 hotend.
+ * Require a value for each tool, including extruders. For machines with non-extruder TOOLS, tool 0 can be the empty tool holder so that the gauge line can be used as the reference.
+ */
+//#define HOTEND_OFFSET_X { 0.0, 20.00 } // (mm) relative X-offset for each nozzle.
+//#define HOTEND_OFFSET_Y { 0.0, 5.00 }  // (mm) relative Y-offset for each nozzle.
+//#define HOTEND_OFFSET_Z { 0.0, 0.00 }  // (mm) relative Z-offset for each nozzle (distance from each tool tip to the tip of tool 0 in Z direction).
 
 // @section psu control
 
@@ -1082,15 +1085,46 @@
 // Articulated robot (arm). Joints are directly mapped to axes with no kinematics.
 //#define ARTICULATED_ROBOT_ARM
 
-// For a 5 axis CNC machine in Head-Table configuration. 
-// This machine has a tilting head (B axis parallel to the Y axis) and a horizontal rotary
-// table (C axis parallel to the Z axis).
-//#define XYZBC_HEAD_TABLE
-#if ENABLED(XYZBC_HEAD_TABLE)
+// For a 5 axis CNC machine in tilting rotary table configuration. 
+// This machine has a tilting table (A axis parallel to the X axis, or B axis parallel to the Y axis) and a rotary
+// (C axis) mounted on the table.
+//#define PENTA_AXIS_TRT
+#if ENABLED(PENTA_AXIS_TRT)
   #define TOOLS 1 // Number of tools;
-  // Machine rotary zero point Z offset is the distance between the center of rotation of the B axis to the gauge line.
-  #define DEFAULT_MRZP_Z_OFFSET_MM 100.0 // (mm)
-  #define DEFAULT_TOOL_LENGTH_OFFSETS { 0.0 } // (mm) Gauge length (Tool length)
+
+  // Machine rotary zero point offsets  
+  // The distance of the tilt axis centerline from the X axis 0 position
+  #define DEFAULT_MRZP_OFFSET_X 0.0 // (mm)
+  // The distance of the tilt axis centerline from the Z axis 0 position
+  #define DEFAULT_MRZP_OFFSET_Y 0.0 // (mm)
+  // The distance of the table rotary axis (C axis) centerline from the Y axis 0 position
+  #define DEFAULT_MRZP_OFFSET_Z 0.0 // (mm)
+
+  // Moves involving rotational axes is broken up into small straight segments (linear interpolation).
+  // This is a trade-off between visible corners (not enough segments)
+  // and processor overload (too many expensive sqrt calls).
+  #define DEFAULT_SEGMENTS_PER_SECOND 200
+
+  // Print surface diameter/2
+  #define PRINTABLE_RADIUS 100.0    // (mm)
+#endif
+
+// For a 5 axis CNC machine in Head-Table configuration. 
+// This machine has a swivel head and a horizontal rotary table.
+//#define PENTA_AXIS_HT
+#if ENABLED(PENTA_AXIS_HT)
+  #define TOOLS 1 // Number of tools;
+
+  // Machine rotary zero point offset is the distance between the center of rotation of the B axis to the gauge line at the tool head.
+  #define DEFAULT_MRZP_OFFSET_Z 100.0 // (mm)
+
+  // Moves involving rotational axes is broken up into small straight segments (linear interpolation).
+  // This is a trade-off between visible corners (not enough segments)
+  // and processor overload (too many expensive sqrt calls).
+  #define DEFAULT_SEGMENTS_PER_SECOND 200
+
+  // Print surface diameter/2
+  #define PRINTABLE_RADIUS 100.0    // (mm)
 #endif
 
 // For a hot wire cutter with parallel horizontal axes (X, I) where the heights of the two wire
@@ -1836,6 +1870,13 @@
 
 #if EITHER(MIN_SOFTWARE_ENDSTOPS, MAX_SOFTWARE_ENDSTOPS)
   //#define SOFT_ENDSTOPS_MENU_ITEM  // Enable/Disable software endstops from the LCD
+
+  /**
+   * Abort printing when any software endstop is triggered.
+   * This feature is enabled with 'M541 S1' or from the LCD menu.
+   * Software endstops must be activated for this option to work.
+   */
+  //#define ABORT_ON_SOFTWARE_ENDSTOP
 #endif
 
 /**

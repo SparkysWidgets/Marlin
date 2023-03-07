@@ -199,6 +199,45 @@
     report_heading_etc(forReplay, F(STR_POLAR_SETTINGS));
     SERIAL_ECHOLNPGM_P(PSTR("  M665 S"), segments_per_second);
   }
+#elif ENABLED(PENTA_AXIS_TRT)
+
+  #include "../../module/penta_axis_trt.h"
+
+  void GcodeSuite::M665() {
+    if (!parser.seen_any()) return M665_report();
+    if (parser.seenval('S')) segments_per_second = parser.value_float();
+    if (parser.seenval('X')) mrzp_offset_x = parser.value_linear_units();
+    if (parser.seenval('Y')) mrzp_offset_y = parser.value_linear_units();
+    if (parser.seenval('Z')) mrzp_offset_z = parser.value_linear_units();
+  }
+
+  void GcodeSuite::M665_report(const bool forReplay/*=true*/) {
+    report_heading_etc(forReplay, F(STR_PAX_TRT_SETTINGS));
+    SERIAL_ECHOLNPGM_P(
+      PSTR("  M665 S"), LINEAR_UNIT(segments_per_second),
+      PSTR(" X"), LINEAR_UNIT(mrzp_offset_x)
+      PSTR(" Y"), LINEAR_UNIT(mrzp_offset_y)
+      PSTR(" Z"), LINEAR_UNIT(mrzp_offset_z)
+    );
+  }
+
+#elif ENABLED(PENTA_AXIS_HT)
+
+  #include "../../module/penta_axis_ht.h"
+
+  void GcodeSuite::M665() {
+    if (!parser.seen_any()) return M665_report();
+    if (parser.seenval('S')) segments_per_second = parser.value_float();
+    if (parser.seenval('Z')) mrzp_offset_z = parser.value_linear_units();
+  }
+
+  void GcodeSuite::M665_report(const bool forReplay/*=true*/) {
+    report_heading_etc(forReplay, F(STR_PENTA_AXIS_SETTINGS));
+    SERIAL_ECHOLNPGM_P(
+      PSTR("  M665 S"), LINEAR_UNIT(segments_per_second),
+      PSTR(" Z"), LINEAR_UNIT(mrzp_offset_z)
+    );
+  }
 
 #endif
 

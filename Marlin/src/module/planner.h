@@ -225,7 +225,7 @@ typedef struct PlannerBlock {
   };
   uint32_t step_event_count;                // The number of step events required to complete this block
 
-  #if HAS_MULTI_EXTRUDER
+  #if EITHER(HAS_MULTI_EXTRUDER, HAS_MULTI_TOOLS)
     uint8_t extruder;                       // The extruder to move (if E move)
   #else
     static constexpr uint8_t extruder = 0;
@@ -504,6 +504,11 @@ class Planner {
     #if ENABLED(SD_ABORT_ON_ENDSTOP_HIT)
       static bool abort_on_endstop_hit;
     #endif
+
+    #if ENABLED(ABORT_ON_SOFTWARE_ENDSTOP)
+      static bool abort_on_software_endstop;
+    #endif
+
     #ifdef XY_FREQUENCY_LIMIT
       static int8_t xy_freq_limit_hz;         // Minimum XY frequency setting
       static float xy_freq_min_speed_factor;  // Minimum speed factor setting
