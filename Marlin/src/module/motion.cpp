@@ -133,6 +133,9 @@ xyze_pos_t destination; // {0}
 // Set by the last G0 through G5 command's "F" parameter.
 // Functions that override this for custom moves *must always* restore it!
 feedRate_t feedrate_mm_s = MMM_TO_MMS(1500);
+#if HAS_ROTATIONAL_AXES
+  feedRate_t feedrate_deg_s = DPM_TO_DPS(1350);
+#endif
 int16_t feedrate_percentage = 100;
 
 // Cartesian conversion result goes here:
@@ -482,15 +485,23 @@ void set_current_from_steppers_for_axis(const AxisEnum axis) {
  * Move the planner to the current position from wherever it last moved
  * (or from wherever it has been told it is located).
  */
-void line_to_current_position(const_feedRate_t fr_mm_s/*=feedrate_mm_s*/) {
-  planner.buffer_line(current_position, fr_mm_s);
+void line_to_current_position(const_feedRate_t fr_mm_s/*=feedrate_mm_s*/
+  OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=feedrate_deg_s*/)
+) {
+  #if HAS_ROTATIONAL_AXES
+    PlannerHints hints;
+    hints.fr_deg_s = fr_deg_s;
+    planner.buffer_line(current_position, fr_mm_s, active_extruder, hints);
+  #else
+    planner.buffer_line(current_position, fr_mm_s);
+  #endif
 }
 
 #if HAS_EXTRUDERS
   void unscaled_e_move(const_float_t length, const_feedRate_t fr_mm_s) {
     TERN_(HAS_FILAMENT_SENSOR, runout.reset());
     current_position.e += length / planner.e_factor[active_extruder];
-    line_to_current_position(fr_mm_s);
+    line_to_current_position(fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, 0.0f));
     planner.synchronize();
   }
 #endif
@@ -500,16 +511,23 @@ void line_to_current_position(const_feedRate_t fr_mm_s/*=feedrate_mm_s*/) {
   /**
    * Buffer a fast move without interpolation. Set current_position to destination
    */
-  void prepare_fast_move_to_destination(const_feedRate_t scaled_fr_mm_s/*=MMS_SCALED(feedrate_mm_s)*/) {
+  void prepare_fast_move_to_destination(
+    const_feedRate_t scaled_fr_mm_s/*=FR_SCALED(feedrate_mm_s)*/
+    OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t scaled_fr_deg_s/*=FR_SCALED(feedrate_deg_s)*/)
+  ) {
     if (DEBUGGING(LEVELING)) DEBUG_POS("prepare_fast_move_to_destination", destination);
-
     #if UBL_SEGMENTED
       // UBL segmented line will do Z-only moves in single segment
       bedlevel.line_to_destination_segmented(scaled_fr_mm_s);
     #else
       if (current_position == destination) return;
-
-      planner.buffer_line(destination, scaled_fr_mm_s);
+      #if HAS_ROTATIONAL_AXES
+        PlannerHints hints;
+        hints.fr_deg_s = scaled_fr_deg_s;
+        planner.buffer_line(destination, scaled_fr_mm_s, active_extruder, hints);
+      #else
+        planner.buffer_line(destination, scaled_fr_mm_s);
+      #endif
     #endif
 
     current_position = destination;
@@ -523,10 +541,16 @@ void line_to_current_position(const_feedRate_t fr_mm_s/*=feedrate_mm_s*/) {
  *  - Extrude the specified length regardless of flow percentage.
  */
 void _internal_move_to_destination(const_feedRate_t fr_mm_s/*=0.0f*/
+  OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0f*/)
   OPTARG(IS_KINEMATIC, const bool is_fast/*=false*/)
 ) {
   const feedRate_t old_feedrate = feedrate_mm_s;
+  #if HAS_ROTATIONAL_AXES
+    const feedRate_t old_angular_feedrate = feedrate_deg_s;
+  #endif
+
   if (fr_mm_s) feedrate_mm_s = fr_mm_s;
+  TERN_(HAS_ROTATIONAL_AXES, if (fr_deg_s) feedrate_deg_s = fr_deg_s);
 
   const uint16_t old_pct = feedrate_percentage;
   feedrate_percentage = 100;
@@ -542,6 +566,7 @@ void _internal_move_to_destination(const_feedRate_t fr_mm_s/*=0.0f*/
     prepare_line_to_destination();
 
   feedrate_mm_s = old_feedrate;
+  TERN_(HAS_ROTATIONAL_AXES, feedrate_deg_s = old_angular_feedrate);
   feedrate_percentage = old_pct;
   TERN_(HAS_EXTRUDERS, planner.e_factor[active_extruder] = old_fac);
 }
@@ -555,7 +580,9 @@ void _internal_move_to_destination(const_feedRate_t fr_mm_s/*=0.0f*/
  * - Delta may lower Z first to get into the free motion zone.
  * - Before returning, wait for the planner buffer to empty.
  */
-void do_blocking_move_to(NUM_AXIS_ARGS(const_float_t), const_feedRate_t fr_mm_s/*=0.0f*/) {
+void do_blocking_move_to(NUM_AXIS_ARGS(const_float_t), const_feedRate_t fr_mm_s/*=0.0f*/
+  OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0*/)
+) {
   DEBUG_SECTION(log_move, "do_blocking_move_to", DEBUGGING(LEVELING));
   if (DEBUGGING(LEVELING)) DEBUG_XYZ("> ", NUM_AXIS_ARGS());
 
@@ -565,12 +592,12 @@ void do_blocking_move_to(NUM_AXIS_ARGS(const_float_t), const_feedRate_t fr_mm_s/
     const feedRate_t z_feedrate = fr_mm_s ?: homing_feedrate(Z_AXIS);
   #endif
   SECONDARY_AXIS_CODE(
-    const feedRate_t i_feedrate = fr_mm_s ?: homing_feedrate(I_AXIS),
-    const feedRate_t j_feedrate = fr_mm_s ?: homing_feedrate(J_AXIS),
-    const feedRate_t k_feedrate = fr_mm_s ?: homing_feedrate(K_AXIS),
-    const feedRate_t u_feedrate = fr_mm_s ?: homing_feedrate(U_AXIS),
-    const feedRate_t v_feedrate = fr_mm_s ?: homing_feedrate(V_AXIS),
-    const feedRate_t w_feedrate = fr_mm_s ?: homing_feedrate(W_AXIS)
+    const feedRate_t i_feedrate = TERN(AXIS4_ROTATES, fr_deg_s, fr_mm_s) ?: homing_feedrate(I_AXIS),
+    const feedRate_t j_feedrate = TERN(AXIS5_ROTATES, fr_deg_s, fr_mm_s) ?: homing_feedrate(J_AXIS),
+    const feedRate_t k_feedrate = TERN(AXIS6_ROTATES, fr_deg_s, fr_mm_s) ?: homing_feedrate(K_AXIS),
+    const feedRate_t u_feedrate = TERN(AXIS7_ROTATES, fr_deg_s, fr_mm_s) ?: homing_feedrate(U_AXIS),
+    const feedRate_t v_feedrate = TERN(AXIS8_ROTATES, fr_deg_s, fr_mm_s) ?: homing_feedrate(V_AXIS),
+    const feedRate_t w_feedrate = TERN(AXIS9_ROTATES, fr_deg_s, fr_mm_s) ?: homing_feedrate(W_AXIS)
   );
 
   #if IS_KINEMATIC && DISABLED(POLARGRAPH)
@@ -582,6 +609,9 @@ void do_blocking_move_to(NUM_AXIS_ARGS(const_float_t), const_feedRate_t fr_mm_s/
   #if ENABLED(DELTA)
 
     REMEMBER(fr, feedrate_mm_s, xy_feedrate);
+    #if HAS_ROTATIONAL_AXES
+      REMEMBER(angular_fr, feedrate_deg_s, i_feedrate);
+    #endif
 
     if (DEBUGGING(LEVELING)) DEBUG_POS("destination = current_position", destination);
 
@@ -619,7 +649,7 @@ void do_blocking_move_to(NUM_AXIS_ARGS(const_float_t), const_feedRate_t fr_mm_s/
     // If Z needs to raise, do it before moving XY
     if (destination.z < z) { destination.z = z; prepare_internal_fast_move_to_destination(z_feedrate); }
 
-    destination.set(x, y); prepare_internal_fast_move_to_destination(xy_feedrate);
+    destination.set(x, y); prepare_internal_fast_move_to_destination(xy_feedrate OPTARG(HAS_ROTATIONAL_AXES, xy_feedrate));
 
     // If Z needs to lower, do it after moving XY
     if (destination.z > z) { destination.z = z; prepare_internal_fast_move_to_destination(z_feedrate); }
@@ -627,33 +657,46 @@ void do_blocking_move_to(NUM_AXIS_ARGS(const_float_t), const_feedRate_t fr_mm_s/
   #else
 
     #if HAS_Z_AXIS  // If Z needs to raise, do it before moving XY
-      if (current_position.z < z) { current_position.z = z; line_to_current_position(z_feedrate); }
+      if (current_position.z < z) {
+        current_position.z = z;
+        line_to_current_position(z_feedrate OPTARG(HAS_ROTATIONAL_AXES, 0.0f));
+      }
     #endif
 
-    current_position.set(x OPTARG(HAS_Y_AXIS, y)); line_to_current_position(xy_feedrate);
+    current_position.set(x OPTARG(HAS_Y_AXIS, y));
+    line_to_current_position(xy_feedrate OPTARG(HAS_ROTATIONAL_AXES, xy_feedrate));
 
     #if HAS_I_AXIS
-      current_position.i = i; line_to_current_position(i_feedrate);
+      current_position.i = i;
+      line_to_current_position(i_feedrate OPTARG(HAS_ROTATIONAL_AXES, i_feedrate));
     #endif
     #if HAS_J_AXIS
-      current_position.j = j; line_to_current_position(j_feedrate);
+      current_position.j = j;
+      line_to_current_position(j_feedrate OPTARG(HAS_ROTATIONAL_AXES, j_feedrate));
     #endif
     #if HAS_K_AXIS
-      current_position.k = k; line_to_current_position(k_feedrate);
+      current_position.k = k;
+      line_to_current_position(k_feedrate OPTARG(HAS_ROTATIONAL_AXES, k_feedrate));
     #endif
     #if HAS_U_AXIS
-      current_position.u = u; line_to_current_position(u_feedrate);
+      current_position.u = u;
+      line_to_current_position(u_feedrate OPTARG(HAS_ROTATIONAL_AXES, u_feedrate));
     #endif
     #if HAS_V_AXIS
-      current_position.v = v; line_to_current_position(v_feedrate);
+      current_position.v = v;
+      line_to_current_position(v_feedrate OPTARG(HAS_ROTATIONAL_AXES, v_feedrate));
     #endif
     #if HAS_W_AXIS
-      current_position.w = w; line_to_current_position(w_feedrate);
+      current_position.w = w;
+      line_to_current_position(w_feedrate OPTARG(HAS_ROTATIONAL_AXES, w_feedrate));
     #endif
 
     #if HAS_Z_AXIS
       // If Z needs to lower, do it after moving XY
-      if (current_position.z > z) { current_position.z = z; line_to_current_position(z_feedrate); }
+      if (current_position.z > z) {
+        current_position.z = z;
+        line_to_current_position(z_feedrate OPTARG(HAS_ROTATIONAL_AXES, 0.0f));
+      }
     #endif
 
   #endif
@@ -661,30 +704,45 @@ void do_blocking_move_to(NUM_AXIS_ARGS(const_float_t), const_feedRate_t fr_mm_s/
   planner.synchronize();
 }
 
-void do_blocking_move_to(const xy_pos_t &raw, const_feedRate_t fr_mm_s/*=0.0f*/) {
-  do_blocking_move_to(NUM_AXIS_LIST(raw.x, raw.y, current_position.z, current_position.i, current_position.j, current_position.k,
-                                    current_position.u, current_position.v, current_position.w), fr_mm_s);
-}
-void do_blocking_move_to(const xyz_pos_t &raw, const_feedRate_t fr_mm_s/*=0.0f*/) {
-  do_blocking_move_to(NUM_AXIS_ELEM(raw), fr_mm_s);
-}
-void do_blocking_move_to(const xyze_pos_t &raw, const_feedRate_t fr_mm_s/*=0.0f*/) {
-  do_blocking_move_to(NUM_AXIS_ELEM(raw), fr_mm_s);
-}
-void do_blocking_move_to_x(const_float_t rx, const_feedRate_t fr_mm_s/*=0.0*/) {
+void do_blocking_move_to(const xy_pos_t &raw
+  OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0f*/)
+  , const_feedRate_t fr_mm_s/*=0.0f*/
+) {
   do_blocking_move_to(
-    NUM_AXIS_LIST(rx, current_position.y, current_position.z, current_position.i, current_position.j, current_position.k,
-                  current_position.u, current_position.v, current_position.w),
-    fr_mm_s
+    NUM_AXIS_LIST(raw.x, raw.y, current_position.z,
+                  current_position.i, current_position.j, current_position.k,
+                  current_position.u, current_position.v, current_position.w)
+    , fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s)
+  );
+}
+void do_blocking_move_to(const xyz_pos_t &raw, const_feedRate_t fr_mm_s/*=0.0f*/
+  OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0f*/)
+) {
+  do_blocking_move_to(NUM_AXIS_ELEM(raw), fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s));
+}
+void do_blocking_move_to(const xyze_pos_t &raw, const_feedRate_t fr_mm_s/*=0.0f*/
+  OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0f*/)
+) {
+  do_blocking_move_to(NUM_AXIS_ELEM(raw), fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s));
+}
+void do_blocking_move_to_x(const_float_t rx
+  , const_feedRate_t fr_mm_s/*=0.0*/
+) {
+  do_blocking_move_to(
+    NUM_AXIS_LIST(rx, current_position.y, current_position.z,
+                  current_position.i, current_position.j, current_position.k,
+                  current_position.u, current_position.v, current_position.w)
+    , fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, 0.0f)
   );
 }
 
 #if HAS_Y_AXIS
   void do_blocking_move_to_y(const_float_t ry, const_feedRate_t fr_mm_s/*=0.0*/) {
     do_blocking_move_to(
-      NUM_AXIS_LIST(current_position.x, ry, current_position.z, current_position.i, current_position.j, current_position.k,
-                    current_position.u, current_position.v, current_position.w),
-      fr_mm_s
+      NUM_AXIS_LIST(current_position.x, ry, current_position.z,
+                    current_position.i, current_position.j, current_position.k,
+                    current_position.u, current_position.v, current_position.w)
+      , fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, 0.0f)
     );
   }
 #endif
@@ -696,73 +754,97 @@ void do_blocking_move_to_x(const_float_t rx, const_feedRate_t fr_mm_s/*=0.0*/) {
 #endif
 
 #if HAS_I_AXIS
-  void do_blocking_move_to_i(const_float_t ri, const_feedRate_t fr_mm_s/*=0.0*/) {
-    do_blocking_move_to_xyz_i(current_position, ri, fr_mm_s);
+  void do_blocking_move_to_i(const_float_t ri, const_feedRate_t fr_mm_s/*=0.0*/
+    OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0*/)
+  ) {
+    do_blocking_move_to_xyz_i(current_position, ri, fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s));
   }
-  void do_blocking_move_to_xyz_i(const xyze_pos_t &raw, const_float_t i, const_feedRate_t fr_mm_s/*=0.0f*/) {
+  void do_blocking_move_to_xyz_i(const xyze_pos_t &raw, const_float_t i, const_feedRate_t fr_mm_s/*=0.0f*/
+    OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0*/)
+  ) {
     do_blocking_move_to(
-      NUM_AXIS_LIST(raw.x, raw.y, raw.z, i, raw.j, raw.k, raw.u, raw.v, raw.w),
-      fr_mm_s
+      NUM_AXIS_LIST(raw.x, raw.y, raw.z, i, raw.j, raw.k, raw.u, raw.v, raw.w)
+      , fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s)
     );
   }
 #endif
 
 #if HAS_J_AXIS
-  void do_blocking_move_to_j(const_float_t rj, const_feedRate_t fr_mm_s/*=0.0*/) {
-    do_blocking_move_to_xyzi_j(current_position, rj, fr_mm_s);
+  void do_blocking_move_to_j(const_float_t rj, const_feedRate_t fr_mm_s/*=0.0*/
+    OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0*/)
+  ) {
+    do_blocking_move_to_xyzi_j(current_position, rj, fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s));
   }
-  void do_blocking_move_to_xyzi_j(const xyze_pos_t &raw, const_float_t j, const_feedRate_t fr_mm_s/*=0.0f*/) {
+  void do_blocking_move_to_xyzi_j(const xyze_pos_t &raw, const_float_t j, const_feedRate_t fr_mm_s/*=0.0f*/
+    OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0*/)
+  ) {
     do_blocking_move_to(
-      NUM_AXIS_LIST(raw.x, raw.y, raw.z, raw.i, j, raw.k, raw.u, raw.v, raw.w),
-      fr_mm_s
+      NUM_AXIS_LIST(raw.x, raw.y, raw.z, raw.i, j, raw.k, raw.u, raw.v, raw.w)
+      , fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s)
     );
   }
 #endif
 
 #if HAS_K_AXIS
-  void do_blocking_move_to_k(const_float_t rk, const_feedRate_t fr_mm_s/*=0.0*/) {
-    do_blocking_move_to_xyzij_k(current_position, rk, fr_mm_s);
+  void do_blocking_move_to_k(const_float_t rk, const_feedRate_t fr_mm_s/*=0.0*/
+    OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0*/)
+  ) {
+    do_blocking_move_to_xyzij_k(current_position, rk, fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s));
   }
-  void do_blocking_move_to_xyzij_k(const xyze_pos_t &raw, const_float_t k, const_feedRate_t fr_mm_s/*=0.0f*/) {
+  void do_blocking_move_to_xyzij_k(const xyze_pos_t &raw, const_float_t k, const_feedRate_t fr_mm_s/*=0.0f*/
+    OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0*/)
+  ) {
     do_blocking_move_to(
-      NUM_AXIS_LIST(raw.x, raw.y, raw.z, raw.i, raw.j, k, raw.u, raw.v, raw.w),
-      fr_mm_s
+      NUM_AXIS_LIST(raw.x, raw.y, raw.z, raw.i, raw.j, k, raw.u, raw.v, raw.w)
+      , fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s)
     );
   }
 #endif
 
 #if HAS_U_AXIS
-  void do_blocking_move_to_u(const_float_t ru, const_feedRate_t fr_mm_s/*=0.0*/) {
-    do_blocking_move_to_xyzijk_u(current_position, ru, fr_mm_s);
+  void do_blocking_move_to_u(const_float_t ru, const_feedRate_t fr_mm_s/*=0.0*/
+    OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0*/)
+  ) {
+    do_blocking_move_to_xyzijk_u(current_position, ru, fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s));
   }
-  void do_blocking_move_to_xyzijk_u(const xyze_pos_t &raw, const_float_t u, const_feedRate_t fr_mm_s/*=0.0f*/) {
+  void do_blocking_move_to_xyzijk_u(const xyze_pos_t &raw, const_float_t u, const_feedRate_t fr_mm_s/*=0.0f*/
+    OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0*/)
+  ) {
     do_blocking_move_to(
-      NUM_AXIS_LIST(raw.x, raw.y, raw.z, raw.i, raw.j, raw.k, u, raw.v, raw.w),
-      fr_mm_s
+      NUM_AXIS_LIST(raw.x, raw.y, raw.z, raw.i, raw.j, raw.k, u, raw.v, raw.w)
+      , fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s)
     );
   }
 #endif
 
 #if HAS_V_AXIS
-  void do_blocking_move_to_v(const_float_t rv, const_feedRate_t fr_mm_s/*=0.0*/) {
-    do_blocking_move_to_xyzijku_v(current_position, rv, fr_mm_s);
+  void do_blocking_move_to_v(const_float_t rv, const_feedRate_t fr_mm_s/*=0.0*/
+    OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0*/)
+  ) {
+    do_blocking_move_to_xyzijku_v(current_position, rv, fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s));
   }
-  void do_blocking_move_to_xyzijku_v(const xyze_pos_t &raw, const_float_t v, const_feedRate_t fr_mm_s/*=0.0f*/) {
+  void do_blocking_move_to_xyzijku_v(const xyze_pos_t &raw, const_float_t v, const_feedRate_t fr_mm_s/*=0.0f*/
+    OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0*/)
+  ) {
     do_blocking_move_to(
-      NUM_AXIS_LIST(raw.x, raw.y, raw.z, raw.i, raw.j, raw.k, raw.u, v, raw.w),
-      fr_mm_s
+      NUM_AXIS_LIST(raw.x, raw.y, raw.z, raw.i, raw.j, raw.k, raw.u, v, raw.w)
+      , fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s)
     );
   }
 #endif
 
 #if HAS_W_AXIS
-  void do_blocking_move_to_w(const_float_t rw, const_feedRate_t fr_mm_s/*=0.0*/) {
-    do_blocking_move_to_xyzijkuv_w(current_position, rw, fr_mm_s);
+  void do_blocking_move_to_w(const_float_t rw, const_feedRate_t fr_mm_s/*=0.0*/
+    OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0*/)
+  ) {
+    do_blocking_move_to_xyzijkuv_w(current_position, rw, fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s));
   }
-  void do_blocking_move_to_xyzijkuv_w(const xyze_pos_t &raw, const_float_t w, const_feedRate_t fr_mm_s/*=0.0f*/) {
+  void do_blocking_move_to_xyzijkuv_w(const xyze_pos_t &raw, const_float_t w, const_feedRate_t fr_mm_s/*=0.0f*/
+    OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s/*=0.0*/)
+  ) {
     do_blocking_move_to(
-      NUM_AXIS_LIST(raw.x, raw.y, raw.z, raw.i, raw.j, raw.k, raw.u, raw.v, w),
-      fr_mm_s
+      NUM_AXIS_LIST(raw.x, raw.y, raw.z, raw.i, raw.j, raw.k, raw.u, raw.v, w)
+      , fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s)
     );
   }
 #endif
@@ -770,9 +852,10 @@ void do_blocking_move_to_x(const_float_t rx, const_feedRate_t fr_mm_s/*=0.0*/) {
 #if HAS_Y_AXIS
   void do_blocking_move_to_xy(const_float_t rx, const_float_t ry, const_feedRate_t fr_mm_s/*=0.0*/) {
     do_blocking_move_to(
-      NUM_AXIS_LIST(rx, ry, current_position.z, current_position.i, current_position.j, current_position.k,
-                    current_position.u, current_position.v, current_position.w),
-      fr_mm_s
+      NUM_AXIS_LIST(rx, ry, current_position.z,
+                    current_position.i, current_position.j, current_position.k,
+                    current_position.u, current_position.v, current_position.w)
+      , fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, 0.0f)
     );
   }
   void do_blocking_move_to_xy(const xy_pos_t &raw, const_feedRate_t fr_mm_s/*=0.0f*/) {
@@ -783,9 +866,10 @@ void do_blocking_move_to_x(const_float_t rx, const_feedRate_t fr_mm_s/*=0.0*/) {
 #if HAS_Z_AXIS
   void do_blocking_move_to_xy_z(const xy_pos_t &raw, const_float_t z, const_feedRate_t fr_mm_s/*=0.0f*/) {
     do_blocking_move_to(
-      NUM_AXIS_LIST(raw.x, raw.y, z, current_position.i, current_position.j, current_position.k,
-                    current_position.u, current_position.v, current_position.w),
-      fr_mm_s
+      NUM_AXIS_LIST(raw.x, raw.y, z,
+                    current_position.i, current_position.j, current_position.k,
+                    current_position.u, current_position.v, current_position.w)
+      , fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, 0.0f)
     );
   }
   void do_z_clearance(const_float_t zclear, const bool lower_allowed/*=false*/) {
@@ -800,9 +884,13 @@ void do_blocking_move_to_x(const_float_t rx, const_feedRate_t fr_mm_s/*=0.0*/) {
 //  - Save / restore current feedrate and multiplier
 //
 static float saved_feedrate_mm_s;
+#if HAS_ROTATIONAL_AXES
+  static float saved_feedrate_deg_s;
+#endif
 static int16_t saved_feedrate_percentage;
 void remember_feedrate_and_scaling() {
   saved_feedrate_mm_s = feedrate_mm_s;
+  TERN_(HAS_ROTATIONAL_AXES, saved_feedrate_deg_s = feedrate_deg_s);
   saved_feedrate_percentage = feedrate_percentage;
 }
 void remember_feedrate_scaling_off() {
@@ -811,6 +899,7 @@ void remember_feedrate_scaling_off() {
 }
 void restore_feedrate_and_scaling() {
   feedrate_mm_s = saved_feedrate_mm_s;
+  TERN_(HAS_ROTATIONAL_AXES, feedrate_deg_s = saved_feedrate_deg_s);
   feedrate_percentage = saved_feedrate_percentage;
 }
 
@@ -1177,13 +1266,22 @@ float get_move_distance(const xyze_pos_t &diff OPTARG(HAS_ROTATIONAL_AXES, bool 
   inline bool line_to_destination_kinematic() {
 
     // Get the top feedrate of the move in the XY plane
-    const float scaled_fr_mm_s = MMS_SCALED(feedrate_mm_s);
+    const float scaled_fr_mm_s = FR_SCALED(feedrate_mm_s);
+    #if HAS_ROTATIONAL_AXES
+      const float scaled_fr_deg_s = FR_SCALED(feedrate_deg_s);
+    #endif
 
     const xyze_float_t diff = destination - current_position;
 
     // If the move is only in Z/E don't split up the move
     if (!diff.x && !diff.y) {
-      planner.buffer_line(destination, scaled_fr_mm_s);
+      #if HAS_ROTATIONAL_AXES
+        PlannerHints hints;
+        hints.fr_deg_s = scaled_fr_deg_s;
+        planner.buffer_line(destination, scaled_fr_mm_s, active_extruder, hints);
+      #else
+        planner.buffer_line(destination, scaled_fr_mm_s);
+      #endif
       return false; // caller will update current_position
     }
 
@@ -1231,7 +1329,12 @@ float get_move_distance(const xyze_pos_t &diff OPTARG(HAS_ROTATIONAL_AXES, bool 
 
     // Add hints to help optimize the move
     PlannerHints hints(cartesian_mm * inv_segments);
-    TERN_(HAS_ROTATIONAL_AXES, hints.cartesian_move = cartes_move);
+
+    #if HAS_ROTATIONAL_AXES
+      hints.cartesian_move = cartes_move;
+      hints.fr_deg_s = scaled_fr_deg_s;
+    #endif
+
     TERN_(FEEDRATE_SCALING, hints.inv_duration = scaled_fr_mm_s / hints.millimeters);
 
     /*
@@ -1271,13 +1374,19 @@ float get_move_distance(const xyze_pos_t &diff OPTARG(HAS_ROTATIONAL_AXES, bool 
      * small incremental moves. This allows the planner to
      * apply more detailed bed leveling to the full move.
      */
-    inline void segmented_line_to_destination(const_feedRate_t fr_mm_s, const float segment_size=LEVELED_SEGMENT_LENGTH) {
+    inline void segmented_line_to_destination(const_feedRate_t fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, const_feedRate_t fr_deg_s), const float segment_size=LEVELED_SEGMENT_LENGTH) {
 
       const xyze_float_t diff = destination - current_position;
 
       // If the move is only in Z/E don't split up the move
       if (!diff.x && !diff.y) {
-        planner.buffer_line(destination, fr_mm_s);
+        #if HAS_ROTATIONAL_AXES
+          PlannerHints hints;
+          hints.fr_deg_s = fr_deg_s;
+          planner.buffer_line(destination, fr_mm_s, active_extruder, hints);
+        #else
+          planner.buffer_line(destination, fr_mm_s);
+        #endif
         return;
       }
 
@@ -1290,6 +1399,7 @@ float get_move_distance(const xyze_pos_t &diff OPTARG(HAS_ROTATIONAL_AXES, bool 
       // If the move is very short, check the E move distance
       // No E move either? Game over.
       TERN_(HAS_EXTRUDERS, if (UNEAR_ZERO(cartesian_mm)) cartesian_mm = ABS(diff.e));
+      // No E move either? Game over.
       if (UNEAR_ZERO(cartesian_mm)) return;
 
       // The length divided by the segment size
@@ -1303,7 +1413,12 @@ float get_move_distance(const xyze_pos_t &diff OPTARG(HAS_ROTATIONAL_AXES, bool 
 
       // Add hints to help optimize the move
       PlannerHints hints(cartesian_mm * inv_segments);
-      TERN_(HAS_ROTATIONAL_AXES, hints.cartesian_move = cartes_move);
+
+      #if HAS_ROTATIONAL_AXES
+        hints.cartesian_move = cartes_move;
+        hints.fr_deg_s = fr_deg_s;
+      #endif
+
       TERN_(FEEDRATE_SCALING, hints.inv_duration = scaled_fr_mm_s / hints.millimeters);
 
       //SERIAL_ECHOPGM("mm=", cartesian_mm);
@@ -1338,7 +1453,10 @@ float get_move_distance(const xyze_pos_t &diff OPTARG(HAS_ROTATIONAL_AXES, bool 
    * Return true if 'current_position' was set to 'destination'
    */
   inline bool line_to_destination_cartesian() {
-    const float scaled_fr_mm_s = MMS_SCALED(feedrate_mm_s);
+    const float scaled_fr_mm_s = FR_SCALED(feedrate_mm_s);
+    #if HAS_ROTATIONAL_AXES
+      const float scaled_fr_deg_s = FR_SCALED(feedrate_deg_s);
+    #endif
     #if HAS_MESH
       if (planner.leveling_active && planner.leveling_active_at_z(destination.z)) {
         #if ENABLED(AUTO_BED_LEVELING_UBL)
@@ -1349,7 +1467,7 @@ float get_move_distance(const xyze_pos_t &diff OPTARG(HAS_ROTATIONAL_AXES, bool 
             return true;                                                             // all moves, including Z-only moves.
           #endif
         #elif ENABLED(SEGMENT_LEVELED_MOVES)
-          segmented_line_to_destination(scaled_fr_mm_s);
+          segmented_line_to_destination(scaled_fr_mm_s OPTARG(HAS_ROTATIONAL_AXES, scaled_fr_deg_s));
           return false; // caller will update current_position
         #else
           /**
@@ -1367,8 +1485,13 @@ float get_move_distance(const xyze_pos_t &diff OPTARG(HAS_ROTATIONAL_AXES, bool 
         #endif
       }
     #endif // HAS_MESH
-
-    planner.buffer_line(destination, scaled_fr_mm_s);
+    #if HAS_ROTATIONAL_AXES
+      PlannerHints hints;
+      hints.fr_deg_s = scaled_fr_deg_s;
+      planner.buffer_line(destination, scaled_fr_mm_s, active_extruder, hints);
+    #else
+      planner.buffer_line(destination, scaled_fr_mm_s);
+    #endif
     return false; // caller will update current_position
   }
 
@@ -1553,7 +1676,7 @@ void prepare_line_to_destination() {
   if (
     #if UBL_SEGMENTED
       #if IS_KINEMATIC // UBL using Kinematic / Cartesian cases as a workaround for now.
-        bedlevel.line_to_destination_segmented(MMS_SCALED(feedrate_mm_s))
+        bedlevel.line_to_destination_segmented(FR_SCALED(feedrate_mm_s))
       #else
         line_to_destination_cartesian()
       #endif
@@ -1608,9 +1731,7 @@ void prepare_line_to_destination() {
    * Homing bump feedrate (mm/s)
    */
   feedRate_t get_homing_bump_feedrate(const AxisEnum axis) {
-    #if HOMING_Z_WITH_PROBE
-      if (axis == Z_AXIS) return MMM_TO_MMS(Z_PROBE_FEEDRATE_SLOW);
-    #endif
+    TERN_(HOMING_Z_WITH_PROBE, if (axis == Z_AXIS) return MMM_TO_MMS(Z_PROBE_FEEDRATE_SLOW));
     static const uint8_t homing_bump_divisor[] PROGMEM = HOMING_BUMP_DIVISOR;
     uint8_t hbd = pgm_read_byte(&homing_bump_divisor[axis]);
     if (hbd < 1) {
@@ -1815,17 +1936,24 @@ void prepare_line_to_destination() {
   /**
    * Home an individual linear axis
    */
-  void do_homing_move(const AxisEnum axis, const float distance, const feedRate_t fr_mm_s=0.0, const bool final_approach=true) {
+  void do_homing_move(const AxisEnum axis, const float distance, const feedRate_t fr_mm_s=0.0
+    OPTARG(HAS_ROTATIONAL_AXES, const feedRate_t fr_deg_s=0.0)
+    , const bool final_approach=true
+  ) {
     DEBUG_SECTION(log_move, "do_homing_move", DEBUGGING(LEVELING));
 
-    const feedRate_t home_fr_mm_s = fr_mm_s ?: homing_feedrate(axis);
+    const feedRate_t home_fr = (TERN_(HAS_ROTATIONAL_AXES, parser.axis_is_rotational(axis) ? fr_deg_s :) fr_mm_s) ?: homing_feedrate(axis);
 
     if (DEBUGGING(LEVELING)) {
       DEBUG_ECHOPGM("...(", AS_CHAR(AXIS_CHAR(axis)), ", ", distance, ", ");
       if (fr_mm_s)
         DEBUG_ECHO(fr_mm_s);
+      #if HAS_ROTATIONAL_AXES
+        else if (fr_deg_s)
+          DEBUG_ECHO(fr_deg_s);
+      #endif
       else
-        DEBUG_ECHOPGM("[", home_fr_mm_s, "]");
+        DEBUG_ECHOPGM("[", home_fr, "]");
       DEBUG_ECHOLNPGM(")");
     }
 
@@ -1868,7 +1996,7 @@ void prepare_line_to_destination() {
       current_position[axis] = 0;
       sync_plan_position();
       current_position[axis] = distance;
-      line_to_current_position(home_fr_mm_s);
+      line_to_current_position(home_fr);
     #else
       // Get the ABC or XYZ positions in mm
       abce_pos_t target = planner.get_axis_positions_mm();
@@ -1882,7 +2010,13 @@ void prepare_line_to_destination() {
 
       // Set delta/cartesian axes directly
       target[axis] = distance;                  // The move will be towards the endstop
-      planner.buffer_segment(target OPTARG(HAS_DIST_MM_ARG, cart_dist_mm), home_fr_mm_s, active_extruder);
+      #if HAS_ROTATIONAL_AXES
+        PlannerHints hints;
+        hints.fr_deg_s = home_fr;
+        planner.buffer_segment(target OPTARG(HAS_DIST_MM_ARG, cart_dist_mm), home_fr, active_extruder, hints);
+      #else
+        planner.buffer_segment(target OPTARG(HAS_DIST_MM_ARG, cart_dist_mm), home_fr, active_extruder);
+      #endif
     #endif
 
     planner.synchronize();
@@ -2043,7 +2177,7 @@ void prepare_line_to_destination() {
 
       if (mmDelta != 0) {
         // Retrace by the amount computed in mmDelta.
-        do_homing_move(axis, mmDelta, get_homing_bump_feedrate(axis));
+        do_homing_move(axis, mmDelta, get_homing_bump_feedrate(axis) OPTARG(HAS_ROTATIONAL_AXES, get_homing_bump_feedrate(axis)));
       }
     }
   #endif
@@ -2115,7 +2249,7 @@ void prepare_line_to_destination() {
       if ((TERN0(X_SENSORLESS, axis == X_AXIS) || TERN0(Y_SENSORLESS, axis == Y_AXIS) || TERN0(Z_SENSORLESS, axis == Z_AXIS) || TERN0(I_SENSORLESS, axis == I_AXIS) || TERN0(J_SENSORLESS, axis == J_AXIS) || TERN0(K_SENSORLESS, axis == K_AXIS)) && backoff[axis]) {
         const float backoff_length = -ABS(backoff[axis]) * axis_home_dir;
         if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Sensorless backoff: ", backoff_length, "mm");
-        do_homing_move(axis, backoff_length, homing_feedrate(axis));
+        do_homing_move(axis, backoff_length, homing_feedrate(axis) OPTARG(HAS_ROTATIONAL_AXES, homing_feedrate(axis)));
       }
     #endif
 
@@ -2142,7 +2276,7 @@ void prepare_line_to_destination() {
     //
     const float move_length = 1.5f * max_length(TERN(DELTA, Z_AXIS, axis)) * axis_home_dir;
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Home Fast: ", move_length, "mm");
-    do_homing_move(axis, move_length, 0.0, !use_probe_bump);
+    do_homing_move(axis, move_length, 0.0 OPTARG(HAS_ROTATIONAL_AXES, 0.0), !use_probe_bump);
 
     #if BOTH(HOMING_Z_WITH_PROBE, BLTOUCH)
       if (axis == Z_AXIS && !bltouch.high_speed_mode) bltouch.stow(); // Intermediate STOW (in LOW SPEED MODE)
@@ -2152,7 +2286,10 @@ void prepare_line_to_destination() {
     if (bump) {
       // Move away from the endstop by the axis HOMING_BUMP_MM
       if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Move Away: ", -bump, "mm");
-      do_homing_move(axis, -bump, TERN(HOMING_Z_WITH_PROBE, (axis == Z_AXIS ? z_probe_fast_mm_s : 0), 0), false);
+      do_homing_move(axis, -bump, TERN(HOMING_Z_WITH_PROBE, (axis == Z_AXIS ? z_probe_fast_mm_s : 0), 0)
+        OPTARG(HAS_ROTATIONAL_AXES, 0)
+        , false
+      );
 
       #if ENABLED(DETECT_BROKEN_ENDSTOP)
         // Check for a broken endstop
@@ -2198,8 +2335,10 @@ void prepare_line_to_destination() {
 
       // Slow move towards endstop until triggered
       const float rebump = bump * 2;
+      const feedRate_t hbf = get_homing_bump_feedrate(axis);
+
       if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Re-bump: ", rebump, "mm");
-      do_homing_move(axis, rebump, get_homing_bump_feedrate(axis), true);
+      do_homing_move(axis, rebump, hbf OPTARG(HAS_ROTATIONAL_AXES, hbf), true);
 
       #if BOTH(HOMING_Z_WITH_PROBE, BLTOUCH)
         if (axis == Z_AXIS) bltouch.stow(); // The final STOW
@@ -2363,7 +2502,7 @@ void prepare_line_to_destination() {
       // Retrace by the amount specified in delta_endstop_adj if more than min steps.
       if (adjDistance * (Z_HOME_DIR) < 0 && ABS(adjDistance) > minDistance) { // away from endstop, more than min distance
         if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("adjDistance:", adjDistance);
-        do_homing_move(axis, adjDistance, get_homing_bump_feedrate(axis));
+        do_homing_move(axis, adjDistance, get_homing_bump_feedrate(axis) OPTARG(HAS_ROTATIONAL_AXES, get_homing_bump_feedrate(axis)));
       }
 
     #else // CARTESIAN / CORE / MARKFORGED_XY / MARKFORGED_YX
