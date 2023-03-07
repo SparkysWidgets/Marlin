@@ -167,6 +167,10 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
                 grabpos = mpe_settings.parking_xpos[new_tool] + (new_tool ? mpe_settings.grab_distance : -mpe_settings.grab_distance),
                 offsetcompensation = TERN0(HAS_HOTEND_OFFSET, hotend_offset[active_extruder].x * mpe_settings.compensation_factor);
 
+    #if HAS_ROTATIONAL_AXES
+      PlannerHints hints;
+    #endif
+
     if (homing_needed_error(_BV(X_AXIS))) return;
 
     /**
@@ -188,7 +192,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
     DEBUG_ECHOPGM("(1) Move extruder ", new_tool);
     DEBUG_POS(" to new extruder ParkPos", current_position);
 
-    planner.buffer_line(current_position, mpe_settings.fast_feedrate, new_tool);
+    planner.buffer_line(current_position, mpe_settings.fast_feedrate, new_tool OPTARG(HAS_ROTATIONAL_AXES, hints));
     planner.synchronize();
 
     // STEP 2
@@ -197,7 +201,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
 
     DEBUG_ECHOPGM("(2) Couple extruder ", new_tool);
     DEBUG_POS(" to new extruder GrabPos", current_position);
-    planner.buffer_line(current_position, mpe_settings.slow_feedrate, new_tool);
+    planner.buffer_line(current_position, mpe_settings.slow_feedrate, new_tool OPTARG(HAS_ROTATIONAL_AXES, hints));
     planner.synchronize();
 
     // Delay before moving tool, to allow magnetic coupling
@@ -210,7 +214,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
     DEBUG_ECHOPGM("(3) Move extruder ", new_tool);
     DEBUG_POS(" back to new extruder ParkPos", current_position);
 
-    planner.buffer_line(current_position, mpe_settings.slow_feedrate, new_tool);
+    planner.buffer_line(current_position, mpe_settings.slow_feedrate, new_tool OPTARG(HAS_ROTATIONAL_AXES, hints));
     planner.synchronize();
 
     // STEP 4
@@ -220,7 +224,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
     DEBUG_ECHOPGM("(4) Move extruder ", new_tool);
     DEBUG_POS(" close to old extruder ParkPos", current_position);
 
-    planner.buffer_line(current_position, mpe_settings.fast_feedrate, new_tool);
+    planner.buffer_line(current_position, mpe_settings.fast_feedrate, new_tool OPTARG(HAS_ROTATIONAL_AXES, hints));
     planner.synchronize();
 
     // STEP 5
@@ -230,7 +234,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
     DEBUG_ECHOPGM("(5) Park extruder ", new_tool);
     DEBUG_POS(" at old extruder ParkPos", current_position);
 
-    planner.buffer_line(current_position, mpe_settings.slow_feedrate, new_tool);
+    planner.buffer_line(current_position, mpe_settings.slow_feedrate, new_tool OPTARG(HAS_ROTATIONAL_AXES, hints));
     planner.synchronize();
 
     // STEP 6
@@ -240,7 +244,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
     DEBUG_ECHOPGM("(6) Move extruder ", new_tool);
     DEBUG_POS(" to starting position", current_position);
 
-    planner.buffer_line(current_position, mpe_settings.fast_feedrate, new_tool);
+    planner.buffer_line(current_position, mpe_settings.fast_feedrate, new_tool OPTARG(HAS_ROTATIONAL_AXES, hints));
     planner.synchronize();
 
     DEBUG_ECHOLNPGM("Autopark done.");
@@ -644,7 +648,6 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
     DEBUG_POS("Move X SwitchPos", current_position);
 
     line_to_current_position(planner.settings.max_feedrate_mm_s[X_AXIS] * 0.25f OPTARG(HAS_ROTATIONAL_AXES, 0.0f));
-
     // 2. Release and place toolhead in the dock
 
     DEBUG_SYNCHRONIZE();
@@ -687,13 +690,16 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
     _line_to_current(Y_AXIS, 0.2f);
 
     #if ENABLED(PRIME_BEFORE_REMOVE) && (SWITCHING_TOOLHEAD_PRIME_MM || SWITCHING_TOOLHEAD_RETRACT_MM)
+      #if HAS_ROTATIONAL_AXES
+        PlannerHints hints;
+      #endif
       #if SWITCHING_TOOLHEAD_PRIME_MM
         current_position.e += SWITCHING_TOOLHEAD_PRIME_MM;
-        planner.buffer_line(current_position, MMM_TO_MMS(SWITCHING_TOOLHEAD_PRIME_FEEDRATE), new_tool);
+        planner.buffer_line(current_position, MMM_TO_MMS(SWITCHING_TOOLHEAD_PRIME_FEEDRATE), new_tool OPTARG(HAS_ROTATIONAL_AXES, hints));
       #endif
       #if SWITCHING_TOOLHEAD_RETRACT_MM
         current_position.e -= SWITCHING_TOOLHEAD_RETRACT_MM;
-        planner.buffer_line(current_position, MMM_TO_MMS(SWITCHING_TOOLHEAD_RETRACT_FEEDRATE), new_tool);
+        planner.buffer_line(current_position, MMM_TO_MMS(SWITCHING_TOOLHEAD_RETRACT_FEEDRATE), new_tool OPTARG(HAS_ROTATIONAL_AXES, hints));
       #endif
     #else
       planner.synchronize();
@@ -845,6 +851,10 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
 
     // Get the home position of the currently-active tool
     const float xhome = x_home_pos(active_extruder);
+
+    #if HAS_ROTATIONAL_AXES
+      PlannerHints hints;
+    #endif
 
     if (dual_x_carriage_mode == DXC_AUTO_PARK_MODE                  // If Auto-Park mode is enabled
         && IsRunning() && !no_move                                  // ...and movement is permitted
