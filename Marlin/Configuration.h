@@ -1082,6 +1082,17 @@
 // Articulated robot (arm). Joints are directly mapped to axes with no kinematics.
 //#define ARTICULATED_ROBOT_ARM
 
+// For a 5 axis CNC machine in Head-Table configuration. 
+// This machine has a tilting head (B axis parallel to the Y axis) and a horizontal rotary
+// table (C axis parallel to the Z axis).
+//#define XYZBC_HEAD_TABLE
+#if ENABLED(XYZBC_HEAD_TABLE)
+  #define TOOLS 1 // Number of tools;
+  // Machine rotary zero point Z offset is the distance between the center of rotation of the B axis to the gauge line.
+  #define DEFAULT_MRZP_Z_OFFSET_MM 100.0 // (mm)
+  #define DEFAULT_TOOL_LENGTH_OFFSETS { 0.0 } // (mm) Gauge length (Tool length)
+#endif
+
 // For a hot wire cutter with parallel horizontal axes (X, I) where the heights of the two wire
 // ends are controlled by parallel axes (Y, J). Joints are directly mapped to axes (no kinematics).
 //#define FOAMCUTTER_XYUV

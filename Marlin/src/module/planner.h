@@ -52,6 +52,10 @@
   #include "polargraph.h"
 #elif ENABLED(POLAR)
   #include "polar.h"
+#elif ENABLED(PENTA_AXIS_TRT)
+  #include "penta_axis_trt.h"
+#elif ENABLED(PENTA_AXIS_HT)
+  #include "penta_axis_ht.h"
 #endif
 
 #if ABL_PLANAR
