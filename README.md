@@ -1,62 +1,67 @@
 # Marlin2ForPipetBot 3D Printer and Lab Robot CNC Firmware
  
-Additional documentation can be found in the 
-repository [DerAndere1/Marlin at https://github.com](https://github.com/DerAndere1/Marlin/tree/Marlin2ForPipetBot), the [Wiki](https://github.com/DerAndere1/Marlin/wiki)
-or on the [PipetBot-A8 project homepage](https://derandere.gitlab.io/pipetbot-a8) 
-that is part of the [authors homepage](https://derandere.gitlab.io). 
-For CNC machines with additional axes (I, J, K, U, V, W) that can be used for indexed machining or to drive pumps or other tools,
-e.g. lab robots (liquid handling robots, "pipetting robots"). 
-Please test this firmware and let us know if it misbehaves in any way. 
-Volunteers are standing by!
+Additional documentation can be found in the repository [DerAndere1/Marlin at https://github.com](https://github.com/DerAndere1/Marlin/tree/Marlin2ForPipetBot), the [Wiki](https://github.com/DerAndere1/Marlin/wiki) or on the [PipetBot-A8 project homepage](https://derandere.gitlab.io/pipetbot-a8) that is part of the [authors homepage](https://derandere.gitlab.io). 
+For CNC machines with additional axes (I, J, K, U, V, W) that can be used for indexed machining or to drive pumps or other tools, e.g. lab robots (liquid handling robots, "pipetting robots"). Please test this firmware and let us know if it misbehaves in any way. Volunteers are standing by!
 
 
-Marlin supports up to nine non-extruder axes plus 
-extruders (e.g. XYZABCUVW+E or XYZABCW+E or XYZCUVW+E or XYZABC+E or XYZUVW+E). 
+Marlin supports up to nine non-extruder axes plus extruders (e.g. XYZABCUVW+E or XYZABCW+E or XYZCUVW+E or XYZABC+E or XYZUVW+E). 
 
-Default axis names are:
+## G-code
+The G-code syntax of Marlin2ForPipetBot is very close to that of LinuxCNC. Here is a list of G-codes that deviated in official MarlinFirmware/Marlin and that are brought more in line with LinuxCNC syntax:
+- F (feedrate for G0, G1, G2, G3, G4, G5)
+- G10 (set offsets)
+- G43 (simple tool length compensation)
 
-| NUM_AXES | Axis codes                 |
-|----------|----------------------------|
-|         3|X, Y, Z, E                  |
-|         4|X, Y, Z, A, E               |
-|         5|X, Y, Z, A, B, E            |
-|         6|X, Y, Z, A, B, C, E         |
-|         7|X, Y, Z, A, B, C, U, E      |
-|         8|X, Y, Z, A, B, C, U, V, E   |
-|         9|X, Y, Z, A, B, C, U, V, W, E|
 
-Example syntax for movement (G-code G1) with 9 axes: 
+### G1 (Linear Move)
+
+Example syntax for movement (G-code G1) with 9 axes plus extruder (default axis names: XYZABCUVW+E): 
 ```
-G1 [Xx.xxxx] [Yy.yyyy] [Zz.zzzz] [Aa.aaaa] Bb.bbbb] [Cc.cccc] [Uu.uuuu] [Vv.vvvv] [Ww.wwww] [Ee.eeee] [Ff.ffff]
+G1 [Xx.xxxx] [Yy.yyyy] [Zz.zzzz] [Aa.aaaa] [Bb.bbbb] [Cc.cccc] [Uu.uuuu] [Vv.vvvv] [Ww.wwww] [Ee.eeee] [Ff.ffff]
 ```
 Parameters:
 
 `X`, `Y`, `Z`: position in the cartesian coordinate system consisting of primary linear axes X, Y and Z. Unit: mm (after G-code G21) or imperial inch (after G-code G20)
 
-`A`, `B`, `C`: angular position in the pseudo-cartesian coordinate system consisting of rotational axes A, B, and C that are parallel (wrapped around) axes axes X, Y and Z. Unit: degrees
+`A`, `B`, `C`: angular position in the pseudo-cartesian coordinate system consisting of rotational axes A, B, and C that are collinear with axes X, Y and Z, respectively. Unit: degrees
 
-`U`, `V`, `W`: position in the cartesian coordinate system consisting of secondary linear axes U, V and W that are parallel to axes X, Y and Z. Unit: mm (after G-code G21) or imperial inch (after G-code G20)
+`U`, `V`, `W`: position in the cartesian coordinate system consisting of secondary linear axes U, V and W that are collinear with axes X, Y and Z. Unit: mm (after G-code G21) or imperial inch (after G-code G20)
 
 `E`: distance the E stepper should move. Unit: mm (after G-code G21) or imperial inch (after G-code G20)
 
 `F`: Feedrate as defined by LinuxCNC (extension of NIST RS274NGC interpreter - version 3):
 
-- For motion involving one or more of the X, Y, and Z axes (with or without motion of other axes), the feed rate means length units per minute along the
-programmed XYZ path, as if the other axes were not moving.
-- For motion of one or more of the secondary linear axes (axis names 'U', 'V', or 'W') with the X, Y , and Z axes not moving (with or without motion of rotational axes), the feed rate means length units per minute along the
-programmed UVW path (using the usual Euclidean metric in the UVW coordinate system), as if the rotational axes were not moving.
-- For motion of one or more of the rotational axes (axis names 'A', 'B' or 'C') with linear axes not moving, the rate is
-applied as follows. Let dA, dB, and dC be the angles in degrees through which the A, B,
-and C axes, respectively, must move. Let D = sqrt((dA)^2 + (dB)^2 + (dC)^2). Conceptually, D is a
-measure of total angular motion, using the usual Euclidean metric. Let T be the amount
-of time required to move through D degrees at the current feed rate in degrees per
-minute. The rotational axes should be moved in coordinated linear motion so that the
-elapsed time from the start to the end of the motion is T plus any time required for
-acceleration or deceleration.
+- For motion involving one or more of the X, Y, and Z axes (with or without motion of other axes), the feed rate means length units per minute along the programmed XYZ path, as if the other axes were not moving.
+- For motion involving one or more of the secondary linear axes (axis names 'U', 'V', or 'W') with the X, Y , and Z axes not moving (with or without motion of rotational axes), the feed rate means length units per minute along the programmed UVW path (using the usual Euclidean metric in the UVW coordinate system), as if the rotational axes were not moving.
+- For motion involving one or more of the rotational axes (axis names 'A', 'B' or 'C') with linear axes not moving, the rate is applied as follows. Let `dA`, `dB`, and `dC` be the angles of rotation around axes A, B, and C axes, respectively, in units of degrees. Let `D = sqrt((dA)^2 + (dB)^2 + (dC)^2)`. Conceptually, `D` is a measure of total angular motion, using the usual Euclidean metric. The motion involving rotational axes should be a coordinated linear motion so that the elapsed total time (in minutes) from the start to the end of the motion is `T = D / F` plus any time required for acceleration or deceleration.
 
-To change the feed rate interpretation the option `ARTICULATED_ROBOT_ARM` can be defined. With that option enabled, feed reference are all axes. This means that in all cases all axes are moved in coordinated linear motion so that the time (in minutes) required for the move is T = sqrt((dA)^2 + (dB)^2 + (dC)^2 + (dU)^2 + (dV)^2 + (dW)^2) / F plus any time for
-acceleration or deceleration.
+To change the feed rate interpretation the option `ARTICULATED_ROBOT_ARM` can be defined. With that option enabled, feed reference are all axes. This means that in all cases all axes are moved in coordinated linear motion so that the time (in minutes) required for the move is `T = sqrt((dA)^2 + (dB)^2 + (dC)^2 + (dU)^2 + (dV)^2 + (dW)^2) / F` plus any time for acceleration or deceleration.
 
+### G10 (Set offsets)
+
+Set offsets. See the following referenes:
+- https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G10-L1_
+- https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G10-L2_
+- https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G10-L11
+- https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G10-L20
+
+### G43 (Tool Length Offset)
+
+Enable simple tool length compensation. See the following referenes:
+- https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G43
+
+
+### G43.4 (Tool Centerpoint control)
+
+Enable tool centerpoint control. See the following referenes:
+- https://www.linkedin.com/pulse/g434-tool-center-point-control-tcp-abhilash-am?trk=read_related_article-card_title
+- https://www.haascnc.com/service/codes-settings.type=gcode.machine=mill.value=G234.html
+
+### G49 (Cancel tool length compensatiion)
+
+Disable tool length compensation (G43) and disable tool centerpoint control (G43.4). See the following referenes:
+- https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G43
+- https://www.haascnc.com/service/codes-settings.type=gcode.machine=mill.value=G49.html
 
 ## Configuration
 
@@ -72,10 +77,9 @@ Important options are:
 
 ### `X_DRIVER_TYPE`
 
-`X_DRIVER_TYPE`, `Y_DRIVER_TYPE`, `Z_DRIVER_TYPE`, `I_DRIVER_TYPE`, `J_DRIVER_TYPE`, `K_DRIVER_TYPE`, `U_DRIVER_TYPE`, `V_DRIVER_TYPE`, `W_DRIVER_TYPE`: These settings allow Marlin to tune stepper driver timing and enable advanced options for
- stepper drivers that support them. You may also override timing options in Configuration_adv.h.
+`X_DRIVER_TYPE`, `Y_DRIVER_TYPE`, `Z_DRIVER_TYPE`, `I_DRIVER_TYPE`, `J_DRIVER_TYPE`, `K_DRIVER_TYPE`, `U_DRIVER_TYPE`, `V_DRIVER_TYPE`, `W_DRIVER_TYPE`: These settings allow Marlin to tune stepper driver timing and enable advanced options for stepper drivers that support them. You may also override timing options in Configuration_adv.h.
  
- Use TMC2208/TMC2208_STANDALONE for TMC2225 drivers and TMC2209/TMC2209_STANDALONE for TMC2226 drivers.
+Use TMC2208/TMC2208_STANDALONE for TMC2225 drivers and TMC2209/TMC2209_STANDALONE for TMC2226 drivers.
  
  Options: A4988, A5984, DRV8825, LV8729, L6470, L6474, POWERSTEP01,
           TB6560, TB6600, TMC2100,
@@ -111,10 +115,7 @@ For moves involving only rotational axes, feedrate is interpreted in angular deg
 
 `AXIS4_NAME`, `AXIS5_NAME`, `AXIS6_NAME`, `AXIS7_NAME`, `AXIS8_NAME`, `AXIS9_NAME`:
 Axis codes for additional axes:
-This defines the axis code that is used in G-code commands to 
-reference a specific axis. Axes with name 'A', 'B' or 'C' are rotational axes for which
-distances and positions must be specified in degrees. Other axes are linear axes for which
-distances and positions must be specified in length units (mm in default mode (after G21) or imperial inches in inch mode (after G20))
+This defines the axis code that is used in G-code commands to reference a specific axis. Axes with name 'A', 'B' or 'C' are rotational axes for which distances and positions must be specified in degrees. Other axes are linear axes for which  distances and positions must be specified in length units (mm in default mode (after G21) or imperial inches in inch mode (after G20))
    * 'A' for rotational axis parallel to X
    * 'B' for rotational axis parallel to Y
    * 'C' for rotational axis parallel to Z
@@ -127,14 +128,27 @@ I (AXIS4), J (AXIS5), K (AXIS6), U (AXIS7), V (AXIS8), W (AXIS9).
 
 Allowed values: ['A', 'B', 'C', 'U', 'V', 'W'] 
 
-### ARTICULATED_ROBOT_ARM
+### `ARTICULATED_ROBOT_ARM`
 
 When enabled, feed rate (the F-word in G1 G-code commands) is interpreted with all axes as the feed reference. For compatibility with Marlin <= 2.0.9.3, grblHAL/grblHAL-core, Duet3D/RepRap-Firmware, synthetos/g2core and for compatibility with articulated robots (robot arms) for which inverse kinematics are not yet implemented in Marlin. For a detailed description of feedrate, see first section.
 
 ### `FOAMCUTTER_XYUV`
 
-Define `FOAMCUTTER_XYUV` kinematics for a hot wire cutter with parallel horizontal axes X, U where the hights
-of the two wire ends are controlled by parallel axes Y, V. Currently only works with `*_DRIVER_TYPE` defined for 5 axes (X, Y, Z, I and J). A dummy pin number can be assigned to pins for the unused Z axis. Leave `FOAMCUTTER_XYUV` disabled for default behaviour (stepper velocities are calculated using multidimensional linear interpolation over all axes). Host software and CAM software for 4 axis foam cutters can be found at https://rckeith.co.uk/file-downloads/ and https://www.jedicut.com/en/download/ .
+Define `FOAMCUTTER_XYUV` kinematics for a hot wire cutter with parallel horizontal axes X, U where the hights of the two wire ends are controlled by parallel axes Y, V. Currently only works with `*_DRIVER_TYPE` defined for 5 axes (X, Y, Z, I and J). A dummy pin number can be assigned to pins for the unused Z axis. Leave `FOAMCUTTER_XYUV` disabled for default behaviour (stepper velocities are calculated using multidimensional linear interpolation over all axes). Host software and CAM software for 4 axis foam cutters can be found at https://rckeith.co.uk/file-downloads/ and https://www.jedicut.com/en/download/ .
+
+### `PENTA_AXIS_TRT`
+
+Define `PENTA_AXIS_TRT` kinematics for a 5 axis CNC machine in tilting-rotating-table configuration to add support for G-code G43.4 (see section G43.4). These machines have 3 mutually orthogonal linear joints aligned with axes XYZ plus a tilting table (A or B axis) on a horizontal rotary table (C axis). There are two possible machine geometries:
+- XYZAC TRT machine: The rotational joint of the tilting table is colinear with the X axis when all axes are at the home position. This requires `AXIS4_NAME 'A'` and `AXIS5_NAME 'C'`.
+- XYZBC TRT machine: The rotational joint of the tilting table is colinear with the Y axis when all axes are at the home position. This requires `AXIS4_NAME 'B'`and `AXIS5_NAME 'C'` (see section `AXIS4_NAME`).
+
+
+### `PENTA_AXIS_HT`
+
+Define `PENTA_AXIS_HT` kinematics for a 5 axis CNC machine in head-table configuration to add support for G-code G43.4 (see section G43.4). These machines have 3 mutually orthogonal linear joints aligned with axes XYZ plus a swivel head (A or B axis) and a horizontal rotary table (C axis). There are two possible machine geometries:
+- XYZAC head-table machine: The rotational joint of the swivel head is colinear with the X axis when all axes are at the home position. This requires `AXIS4_NAME 'A'` and `AXIS5_NAME 'C'`.
+- XYZBC head-table machine: The rotational joint of the swivel head is colinear with the Y axis when all axes are at the home position. This requires `AXIS4_NAME 'B'`and `AXIS5_NAME 'C'` (see section `AXIS4_NAME`).
+
 
 ### SAFE_BED_LEVELING_START_X
 
@@ -144,18 +158,6 @@ Required for multi-axis machines (`I_DRIVER_TYPE` ... defined).
 Values must be chosen so that the bed is oriented horizontally and so that the Z-probe is oriented vertically.
 Note: If inverse kinematics for your machine are not implemented, bed leveling produces wrong results for all moves where the bed is not oriented horizontally or where the tool head is not oriented vertically. In these cases, bed leveling must be disabled.
 
-## Marlin2ForPipetBot Branch
-
-__Not for production use. Use with caution!__
-
-Marlin2forPipetBot is a branch of the Marlin fork by DerAndere (based on 
-https://github.com/MarlinFirmware/Marlin/tree/3e9fb34892e85bc4069acf5baddbf12d6cd47789). 
-
-This branch is for patches to the latest Marlin2ForPipetBot release version.
-
-
-## Configuration
-
 ### LCD_SHOW_SECONDARY_AXES
 
 Show the position of secondary axes I[J[K]] instead of icons on an DOGM LCD (e.g. REPRAP_FULL_GRAPHICS_DISPLAY).
@@ -164,6 +166,15 @@ Show the position of secondary axes I[J[K]] instead of icons on an DOGM LCD (e.g
 
 If all axes are homed, first raise Z, then move all axes except Z simultaneously to their home position. Once the first axis reaches its home position, the axes will be homed individually in sequence XYZIJKUVW. Requires `QUICK_HOME`.
 
+
+## Marlin2ForPipetBot Branch
+
+__Not for production use. Use with caution!__
+
+Marlin2forPipetBot is a branch of the Marlin fork by DerAndere (based on 
+https://github.com/MarlinFirmware/Marlin/tree/3e9fb34892e85bc4069acf5baddbf12d6cd47789). 
+
+This branch is for patches to the latest Marlin2ForPipetBot release version.
 
 ## Example Configurations
 
