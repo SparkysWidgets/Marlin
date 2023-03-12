@@ -337,6 +337,9 @@ typedef struct SettingsDataStruct {
       #if ENABLED(PENTA_AXIS_TRT)
         float mrzp_offset_x;                              // M665 X
         float mrzp_offset_y;                              // M665 Y
+        float rotational_offset_x;                        // M665 I
+        float rotational_offset_y;                        // M665 J
+        float rotational_offset_z;                        // M665 K
       #endif 
       float mrzp_offset_z;                              // M665 Z
     #elif ENABLED(DELTA)
@@ -1043,9 +1046,15 @@ void MarlinSettings::postprocess() {
           EEPROM_WRITE(mrzp_offset_x);               // 1 float
           _FIELD_TEST(mrzp_offset_y);
           EEPROM_WRITE(mrzp_offset_y);               // 1 float
+          _FIELD_TEST(rotational_offset_x);
+          EEPROM_WRITE(rotational_offset_x);         // 1 float
+          _FIELD_TEST(rotational_offset_y);
+          EEPROM_WRITE(rotational_offset_y);         // 1 float
+          _FIELD_TEST(rotational_offset_z);
+          EEPROM_WRITE(rotational_offset_z);         // 1 float
         #endif
         _FIELD_TEST(mrzp_offset_z);
-        EEPROM_WRITE(mrzp_offset_z);               // 1 float
+        EEPROM_WRITE(mrzp_offset_z);                 // 1 float
       #elif ENABLED(DELTA)
         _FIELD_TEST(delta_height);
         EEPROM_WRITE(delta_height);              // 1 float
@@ -2023,6 +2032,12 @@ void MarlinSettings::postprocess() {
             EEPROM_READ(mrzp_offset_x);
             _FIELD_TEST(mrzp_offset_y);
             EEPROM_READ(mrzp_offset_y);
+            _FIELD_TEST(rotational_offset_x);
+            EEPROM_READ(rotational_offset_x);
+            _FIELD_TEST(rotational_offset_y);
+            EEPROM_READ(rotational_offset_y);
+            _FIELD_TEST(rotational_offset_z);
+            EEPROM_READ(rotational_offset_z);
           #endif
           _FIELD_TEST(mrzp_offset_z);
           EEPROM_READ(mrzp_offset_z);
@@ -3129,6 +3144,9 @@ void MarlinSettings::reset() {
       #if ENABLED(PENTA_AXIS_TRT)
         mrzp_offset_x = DEFAULT_MRZP_OFFSET_X;
         mrzp_offset_y = DEFAULT_MRZP_OFFSET_Y;
+        rotational_offset_x = DEFAULT_ROTATIONAL_OFFSET_X;
+        rotational_offset_y = DEFAULT_ROTATIONAL_OFFSET_Y;
+        rotational_offset_x = DEFAULT_ROTATIONAL_OFFSET_Z;
       #endif
       mrzp_offset_z = DEFAULT_MRZP_OFFSET_Z;
     #elif ENABLED(DELTA)

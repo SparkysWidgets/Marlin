@@ -209,6 +209,9 @@
     if (parser.seenval('X')) mrzp_offset_x = parser.value_linear_units();
     if (parser.seenval('Y')) mrzp_offset_y = parser.value_linear_units();
     if (parser.seenval('Z')) mrzp_offset_z = parser.value_linear_units();
+    if (parser.seenval('I')) rotational_offset_x = parser.value_linear_units();
+    if (parser.seenval('J')) rotational_offset_y = parser.value_linear_units();
+    if (parser.seenval('K')) rotational_offset_z = parser.value_linear_units();
   }
 
   void GcodeSuite::M665_report(const bool forReplay/*=true*/) {
@@ -218,6 +221,9 @@
       PSTR(" X"), LINEAR_UNIT(mrzp_offset_x)
       PSTR(" Y"), LINEAR_UNIT(mrzp_offset_y)
       PSTR(" Z"), LINEAR_UNIT(mrzp_offset_z)
+      PSTR(" I"), LINEAR_UNIT(rotational_offset_x)
+      PSTR(" J"), LINEAR_UNIT(rotational_offset_y)
+      PSTR(" K"), LINEAR_UNIT(rotational_offset_z)
     );
   }
 

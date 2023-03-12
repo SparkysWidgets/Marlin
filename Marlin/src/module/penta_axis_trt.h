@@ -47,10 +47,15 @@
 extern bool tool_centerpoint_control;
 extern float segments_per_second;
 
-// Center of rotation of the tilting rotating table, given as native machine coorinates.
+// Center of rotation of the tilting rotating table, given as native machine coorinates when all axes are at 0.
 extern float mrzp_offset_x;
 extern float mrzp_offset_y;
 extern float mrzp_offset_z;
+
+// Offsets between the Centerlines of the rotational joints when all axes are at 0. 
+extern float x_offset; // For a machine with XYZBC axes, this is the x offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table
+extern float y_offset; // For a machine with XYZAC axes, this is the y offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table
+extern float z_offset; // This is the Z offset between the horizontal centerline of the joint that tilts the table and the surface at the top of the horizontal table
 
 /**
  * 5 axis tilting rotary table inverse kinematics

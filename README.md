@@ -63,6 +63,57 @@ Disable tool length compensation (G43) and disable tool centerpoint control (G43
 - https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G43
 - https://www.haascnc.com/service/codes-settings.type=gcode.machine=mill.value=G49.html
 
+
+### M665
+
+#### M665 Z
+
+Machine rotary zero point (MRZP) Z offset. 
+- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Z axis from machine zero point to the horizontal centerline of the joint that tilts the table (A or B axis).  
+- For 5 axis CNC machines in head-table configuration (PENTA_AXIS_HT) this is the distance along the Z axis from the machine zero point to the vertical centerline of the joint that tilts the tool head when all axes are in 0 position. 
+
+See `DEFAULT_MRZP_OFFSET_Z` these references:
+https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S257.html
+
+#### M665 X
+
+Machine rotary zero point (MRZP) X offset.
+For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the X axis from machine zero point to the horizontal centerline of the joint that tilts the table (A or B axis) when all axes are in 0 position. 
+
+See `DEFAULT_MRZP_OFFSET_X` and these references:
+- https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S255.html
+
+### `DEFAULT_MRZP_OFFSET_Y`
+
+Machine rotary zero point (MRZP) Y offset. 
+- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the Y axis from machine zero point to the centerline of the joint that tilts the table (A axis) when all axes are homed. 
+- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZBC this is the distance along the Y axis from machine zero point to the vertical centerline of the joint that rotates the table (C axis) when all axes are in 0 position.
+
+See these references:
+- https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S256.html
+
+#### M665 I
+
+For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZBC axes this is the x offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table.
+
+See `DEFAULT_ROTATIONAL_OFFSET_X` and `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
+- https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
+
+#### M665 J
+
+For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZAC axes this is the y offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table.
+
+See `DEFAULT_ROTATIONAL_OFFSET_Y` and `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
+- https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
+
+#### M665 K
+
+For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) this is the Z offset between the horizontal centerline of the joint that tilts the table and the surface at the top of the horizontal table.
+
+See `DEFAULT_ROTATIONAL_OFFSET_Z` and `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
+- https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
+
+
 ## Configuration
 
 Configuration is done by editing the file Marlin/Configuration.h. E.g. change
@@ -138,19 +189,64 @@ Define `FOAMCUTTER_XYUV` kinematics for a hot wire cutter with parallel horizont
 
 ### `PENTA_AXIS_TRT`
 
-Define `PENTA_AXIS_TRT` kinematics for a 5 axis CNC machine in tilting-rotating-table configuration to add support for G-code G43.4 (see section G43.4). These machines have 3 mutually orthogonal linear joints aligned with axes XYZ plus a tilting table (A or B axis) on a horizontal rotary table (C axis). There are two possible machine geometries:
+Define `PENTA_AXIS_TRT` kinematics for a 5 axis CNC machine in tilting-rotating-table configuration to add support for tool center point control (see section G43.4 tool center point control). These machines have 3 mutually orthogonal linear joints aligned with axes XYZ plus a tilting table (A or B axis) on a horizontal rotary table (C axis). Two different machine geometries of this type are supported:
 - XYZAC TRT machine: The rotational joint of the tilting table is colinear with the X axis when all axes are at the home position. This requires `AXIS4_NAME 'A'` and `AXIS5_NAME 'C'`.
 - XYZBC TRT machine: The rotational joint of the tilting table is colinear with the Y axis when all axes are at the home position. This requires `AXIS4_NAME 'B'`and `AXIS5_NAME 'C'` (see section `AXIS4_NAME`).
 
-
 ### `PENTA_AXIS_HT`
 
-Define `PENTA_AXIS_HT` kinematics for a 5 axis CNC machine in head-table configuration to add support for G-code G43.4 (see section G43.4). These machines have 3 mutually orthogonal linear joints aligned with axes XYZ plus a swivel head (A or B axis) and a horizontal rotary table (C axis). There are two possible machine geometries:
+Define `PENTA_AXIS_HT` kinematics for a 5 axis CNC machine in head-table configuration to add support for tool center point control (see section G43.4 tool center point control). These machines have 3 mutually orthogonal linear joints aligned with axes XYZ plus a swivel head (A or B axis) and a horizontal rotary table (C axis). There are two possible machine geometries:
 - XYZAC head-table machine: The rotational joint of the swivel head is colinear with the X axis when all axes are at the home position. This requires `AXIS4_NAME 'A'` and `AXIS5_NAME 'C'`.
 - XYZBC head-table machine: The rotational joint of the swivel head is colinear with the Y axis when all axes are at the home position. This requires `AXIS4_NAME 'B'`and `AXIS5_NAME 'C'` (see section `AXIS4_NAME`).
 
+### `DEFAULT_MRZP_OFFSET_Z`
 
-### SAFE_BED_LEVELING_START_X
+Machine rotary zero point (MRZP) Z offset. 
+- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Z axis from machine zero point to the horizontal centerline of the joint that tilts the table (A or B axis).  
+- For 5 axis CNC machines in head-table configuration (PENTA_AXIS_HT) this is the distance along the Z axis from the machine zero point to the vertical centerline of the joint that tilts the tool head when all axes are in 0 position. 
+
+See these references:
+https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S257.html
+
+### `DEFAULT_MRZP_OFFSET_X`
+
+Machine rotary zero point (MRZP) X offset.
+For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the X axis from machine zero point to the horizontal centerline of the joint that tilts the table (A or B axis) when all axes are in 0 position. 
+
+See these references:
+- https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S255.html
+
+### `DEFAULT_MRZP_OFFSET_Y`
+
+Machine rotary zero point (MRZP) Y offset. 
+- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the Y axis from machine zero point to the centerline of the joint that tilts the table (A axis) when all axes are homed. 
+- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZBC this is the distance along the Y axis from machine zero point to the vertical centerline of the joint that rotates the table (C axis) when all axes are in 0 position.
+
+See these references:
+- https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S256.html
+
+### `DEFAULT_ROTATIONAL_OFFSET_X`
+
+For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZBC axes this is the x offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table.
+
+See `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
+- https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
+
+### `DEFAULT_ROTATIONAL_OFFSET_Y`
+
+For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZAC axes this is the y offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table.
+
+See `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
+- https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
+
+### `DEFAULT_ROTATIONAL_OFFSET_Z`
+
+For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) this is the Z offset between the horizontal centerline of the joint that tilts the table and the surface at the top of the horizontal table.
+
+See `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
+- https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
+
+### `SAFE_BED_LEVELING_START_X`
 
 `SAFE_BED_LEVELING_START_X`, `SAFE_BED_LEVELING_START_Y`, `SAFE_BED_LEVELING_START_Z`, `SAFE_BED_LEVELING_START_I`, `SAFE_BED_LEVELING_START_J`, `SAFE_BED_LEVELING_START_K`, `SAFE_BED_LEVELING_START_U`, `SAFE_BED_LEVELING_START_V`, `SAFE_BED_LEVELING_START_W`: 
 Safe bed leveling start coordinates. If enabled, the respective axis is moved to the specified position at the beginning of the bed leveling procedure.

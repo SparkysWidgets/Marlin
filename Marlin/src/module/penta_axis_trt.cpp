@@ -53,6 +53,9 @@ float segments_per_second;
 float mrzp_offset_x;
 float mrzp_offset_y;
 float mrzp_offset_z;
+float x_offset;
+float y_offset;
+float z_offset;
 
 /**
  * 5 axis tilting rotating table inverse kinematics
@@ -95,11 +98,17 @@ xyz_pos_t native_to_joint(const xyz_pos_t &native) {
         sin_j * cos_i * pivot_length_x
       + cos_j * cos_i * pivot_length_y
       -         sin_i * pivot_length_z
+      -         cos_i * y_offset
+      +         sin_i * z_offset
+      + y_offset
       + mrzp_offset_y - hotend_offset[active_extruder].y,
 
         sin_j * sin_i * pivot_length_x
       + cos_j * sin_i * pivot_length_y
-      +         cos_i * pivot_length_z
+      +         cos_i * (pos->tran.z - z_rot_point)
+      -         sin_i * y_offset
+      -         cos_i * z_offset
+      + z_offset      
       + mrzp_offset_z - hotend_offset[active_extruder].z,
 
         native.i,
@@ -112,6 +121,9 @@ xyz_pos_t native_to_joint(const xyz_pos_t &native) {
         cos_j * cos_i * pivot_length_x
       - sin_j * cos_i * pivot_length_y
       +         sin_i * pivot_length_z
+      -         cos_i * x_offset 
+      -         sin_i * z_offset 
+      + x_offset 
       + mrzp_offset_x - hotend_offset[active_extruder].x,
 
         sin_j      * pivot_length_x
@@ -121,6 +133,9 @@ xyz_pos_t native_to_joint(const xyz_pos_t &native) {
       - cos_j * sin_i * pivot_length_x
       + sin_j * sin_i * pivot_length_y
       +         cos_i * pivot_length_z
+      -         sin_i * x_offset 
+      -         cos_i * z_offset
+      + z_offset
       + mrzp_offset_z - hotend_offset[active_extruder].z,
 
         native.i,
