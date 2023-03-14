@@ -1,17 +1,20 @@
 # Marlin2ForPipetBot 3D Printer and Lab Robot CNC Firmware
  
 Additional documentation can be found in the repository [DerAndere1/Marlin at https://github.com](https://github.com/DerAndere1/Marlin/tree/Marlin2ForPipetBot), the [Wiki](https://github.com/DerAndere1/Marlin/wiki) or on the [PipetBot-A8 project homepage](https://derandere.gitlab.io/pipetbot-a8) that is part of the [authors homepage](https://derandere.gitlab.io). 
-For CNC machines with additional axes (I, J, K, U, V, W) that can be used for indexed machining or to drive pumps or other tools, e.g. lab robots (liquid handling robots, "pipetting robots"). Please test this firmware and let us know if it misbehaves in any way. Volunteers are standing by!
+For multi-axis CNC machines and lab robots (liquid handling robots, "pipetting robots"). Please test this firmware and let us know if it misbehaves in any way. Volunteers are standing by!
 
 
 Marlin supports up to nine non-extruder axes plus extruders (e.g. XYZABCUVW+E or XYZABCW+E or XYZCUVW+E or XYZABC+E or XYZUVW+E). 
 
 ## G-code
-The G-code syntax of Marlin2ForPipetBot is very close to that of LinuxCNC. Here is a list of G-codes that deviated in official MarlinFirmware/Marlin and that are brought more in line with LinuxCNC syntax:
+The G-code syntax of Marlin2ForPipetBot closely resembles that of LinuxCNC. Here is a list of G-codes that deviated in official MarlinFirmware/Marlin and that are brought more in line with LinuxCNC syntax:
 - F (feedrate for G0, G1, G2, G3, G4, G5)
 - G10 (set offsets)
 - G43 (simple tool length compensation)
+- G49 (cancel tool length compensation and cancel tool centerpoint control)
 
+New G-codes:
+- G43.4 (tool centerpoint control)
 
 ### G1 (Linear Move)
 
@@ -39,7 +42,7 @@ To change the feed rate interpretation the option `ARTICULATED_ROBOT_ARM` can be
 
 ### G10 (Set offsets)
 
-Set offsets. See the following referenes:
+Set offsets. See the following references:
 - https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G10-L1_
 - https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G10-L2_
 - https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G10-L11
@@ -47,19 +50,19 @@ Set offsets. See the following referenes:
 
 ### G43 (Tool Length Offset)
 
-Enable simple tool length compensation. See the following referenes:
+Enable simple tool length compensation. See the following references:
 - https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G43
 
 
-### G43.4 (Tool Centerpoint control)
+### G43.4 (Tool centerpoint control)
 
-Enable tool centerpoint control. See the following referenes:
+Enable tool centerpoint control. See the following references:
 - https://www.linkedin.com/pulse/g434-tool-center-point-control-tcp-abhilash-am?trk=read_related_article-card_title
 - https://www.haascnc.com/service/codes-settings.type=gcode.machine=mill.value=G234.html
 
 ### G49 (Cancel tool length compensatiion)
 
-Disable tool length compensation (G43) and disable tool centerpoint control (G43.4). See the following referenes:
+Disable tool length compensation (G43) and disable tool centerpoint control (G43.4). Enter direct joint control mode. See the following references:
 - https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G43
 - https://www.haascnc.com/service/codes-settings.type=gcode.machine=mill.value=G49.html
 
@@ -83,7 +86,7 @@ For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes X
 See `DEFAULT_MRZP_OFFSET_X` and these references:
 - https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S255.html
 
-### `DEFAULT_MRZP_OFFSET_Y`
+#### M665 Y
 
 Machine rotary zero point (MRZP) Y offset. 
 - For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the Y axis from machine zero point to the centerline of the joint that tilts the table (A axis) when all axes are homed. 
@@ -245,6 +248,10 @@ For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) this is th
 
 See `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
+
+### `TOOLS`
+
+Number of tools, including extruders. Lower tool indices, starting with 0, must be assigned to extruders. Offsets of each tool from tool 0 must be defined with `HOTEND_OFFSET_X`, `HOTEND_OFFSET_Y` and `HOTEND_OFFSET_Z`.
 
 ### `SAFE_BED_LEVELING_START_X`
 
