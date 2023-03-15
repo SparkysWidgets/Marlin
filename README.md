@@ -72,16 +72,16 @@ Disable tool length compensation (G43) and disable tool centerpoint control (G43
 #### M665 Z
 
 Machine rotary zero point (MRZP) Z offset. 
-- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Z axis from machine zero point to the horizontal centerline of the joint that tilts the table (A or B axis).  
-- For 5 axis CNC machines in head-table configuration (PENTA_AXIS_HT) this is the distance along the Z axis from the machine zero point to the vertical centerline of the joint that tilts the tool head when all axes are in 0 position. 
+- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Z axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
+- For 5 axis CNC machines in head-table configuration (PENTA_AXIS_HT) this is the distance along the Z axis from the machine zero point to the horizontal centerline of the joint that tilts the tool head when all axes are in 0 position. 
 
-See `DEFAULT_MRZP_OFFSET_Z` these references:
+See `DEFAULT_MRZP_OFFSET_Z` and these references:
 https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S257.html
 
 #### M665 X
 
 Machine rotary zero point (MRZP) X offset.
-For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the X axis from machine zero point to the horizontal centerline of the joint that tilts the table (A or B axis) when all axes are in 0 position. 
+For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the X axis from machine zero point tothe center of rotation. The center of rotation is usually the center of the top surface of the table.
 
 See `DEFAULT_MRZP_OFFSET_X` and these references:
 - https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S255.html
@@ -89,8 +89,8 @@ See `DEFAULT_MRZP_OFFSET_X` and these references:
 #### M665 Y
 
 Machine rotary zero point (MRZP) Y offset. 
-- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the Y axis from machine zero point to the centerline of the joint that tilts the table (A axis) when all axes are homed. 
-- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZBC this is the distance along the Y axis from machine zero point to the vertical centerline of the joint that rotates the table (C axis) when all axes are in 0 position.
+For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Y axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
+
 
 See these references:
 - https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S256.html
@@ -205,8 +205,8 @@ Define `PENTA_AXIS_HT` kinematics for a 5 axis CNC machine in head-table configu
 ### `DEFAULT_MRZP_OFFSET_Z`
 
 Machine rotary zero point (MRZP) Z offset. 
-- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Z axis from machine zero point to the horizontal centerline of the joint that tilts the table (A or B axis).  
-- For 5 axis CNC machines in head-table configuration (PENTA_AXIS_HT) this is the distance along the Z axis from the machine zero point to the vertical centerline of the joint that tilts the tool head when all axes are in 0 position. 
+- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Z axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
+- For 5 axis CNC machines in head-table configuration (PENTA_AXIS_HT) this is the distance along the Z axis from the machine zero point to the horizontal centerline of the joint that tilts the tool head when all axes are in 0 position.
 
 See these references:
 https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S257.html
@@ -214,7 +214,7 @@ https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S
 ### `DEFAULT_MRZP_OFFSET_X`
 
 Machine rotary zero point (MRZP) X offset.
-For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the X axis from machine zero point to the horizontal centerline of the joint that tilts the table (A or B axis) when all axes are in 0 position. 
+For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the X axis from machine zero point to the center of rotation when all axes are in 0 position. The center of rotation is usually the center of the top surface of the table.
 
 See these references:
 - https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S255.html
@@ -222,8 +222,8 @@ See these references:
 ### `DEFAULT_MRZP_OFFSET_Y`
 
 Machine rotary zero point (MRZP) Y offset. 
-- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the Y axis from machine zero point to the centerline of the joint that tilts the table (A axis) when all axes are homed. 
-- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZBC this is the distance along the Y axis from machine zero point to the vertical centerline of the joint that rotates the table (C axis) when all axes are in 0 position.
+- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the Y axis from machine zero point to the center of rotation when all axes are at 0. The center of rotation is usually the center of the top surface of the table.
+- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZBC this is the distance along the Y axis from machine zero point to the to the center of rotation when all axes are in 0 position. The center of rotation is usually the center of the top surface of the table.
 
 See these references:
 - https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S256.html
