@@ -449,14 +449,14 @@ void MarlinUI::clear_lcd() { lcd.clear(); }
   static void logo_lines(FSTR_P const extra) {
     #if LCD_WIDTH == 16
       int16_t indent = (LCD_WIDTH - 16 - utf8_strlen(extra)) / 2;
-      lcd_put_wchar(indent, 0, '\x00'); lcd_put_u8str(F( "------------" ));  lcd_put_wchar('\x01');
+      lcd_put_lchar(indent, 0, '\x00'); lcd_put_u8str(F( "------------" )); lcd_put_u8str(F("\x01"));
       lcd_put_u8str(indent, 1, F("MarlinPipetBot")); lcd_put_u8str(extra);
-      lcd_put_wchar(indent, 2, '\x02'); lcd_put_u8str(F( "------------" ));  lcd_put_wchar('\x03');
+      lcd_put_lchar(indent, 2, '\x02'); lcd_put_u8str(F( "------------" )); lcd_put_u8str(F("\x03"));
     #else
       int16_t indent = (LCD_WIDTH - 20 - utf8_strlen(extra)) / 2;
-      lcd_put_wchar(indent, 0, '\x00'); lcd_put_u8str(F( "----------------" ));  lcd_put_wchar('\x01');
+      lcd_put_lchar(indent, 0, '\x00'); lcd_put_u8str(F( "----------------" )); lcd_put_u8str(F("\x01"));
       lcd_put_u8str(indent, 1, F("Marlin2ForPipetBot")); lcd_put_u8str(extra);
-      lcd_put_wchar(indent, 2, '\x02'); lcd_put_u8str(F( "----------------" ));  lcd_put_wchar('\x03');
+      lcd_put_lchar(indent, 2, '\x02'); lcd_put_u8str(F( "----------------" )); lcd_put_u8str(F("\x03"));
     #endif
   }
 

@@ -140,7 +140,7 @@
     feedRate_t old_max_speeds[NUM_AXES];
     LOOP_NUM_AXES(i) {
       old_max_speeds[i] = planner.settings.max_feedrate_mm_s[i];
-      planner.set_max_feedrate(i, homing_feedrate((AxisEnum)i));
+      planner.set_max_feedrate((AxisEnum)i, homing_feedrate((AxisEnum)i));
     }
     #if ENABLED(SENSORLESS_HOMING)
       sensorless_t stealth_states {
@@ -190,7 +190,7 @@
     #endif
 
     LOOP_NUM_AXES(i) { 
-      planner.set_max_feedrate(i, old_max_speeds[i]);
+      planner.set_max_feedrate((AxisEnum)i, old_max_speeds[i]);
     }
 
     #if ENABLED(SENSORLESS_HOMING) && DISABLED(ENDSTOPS_ALWAYS_ON_DEFAULT)
