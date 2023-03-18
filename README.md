@@ -253,6 +253,11 @@ See `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machin
 
 Number of tools, including extruders. Lower tool indices, starting with 0, must be assigned to extruders. Offsets of each tool from tool 0 must be defined with `HOTEND_OFFSET_X`, `HOTEND_OFFSET_Y` and `HOTEND_OFFSET_Z`.
 
+### `ABORT_ON_SOFTWARE_ENDSTOPS`
+
+Abort printing when any software endstop is triggered. This feature is enabled with 'M541 S1' or from the LCD menu.
+Software endstops must be activated for this option to work.
+
 ### `SAFE_BED_LEVELING_START_X`
 
 `SAFE_BED_LEVELING_START_X`, `SAFE_BED_LEVELING_START_Y`, `SAFE_BED_LEVELING_START_Z`, `SAFE_BED_LEVELING_START_I`, `SAFE_BED_LEVELING_START_J`, `SAFE_BED_LEVELING_START_K`, `SAFE_BED_LEVELING_START_U`, `SAFE_BED_LEVELING_START_V`, `SAFE_BED_LEVELING_START_W`: 
