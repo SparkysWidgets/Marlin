@@ -67,9 +67,17 @@ Disable tool length compensation (G43) and disable tool centerpoint control (G43
 - https://www.haascnc.com/service/codes-settings.type=gcode.machine=mill.value=G49.html
 
 
-### M665
+### M665 (PENTA_AXIS configuration)
 
-#### M665 Z
+Configure `PENTA_AXIS_TRT` and `PENTA_AXIS_HT` geometry values.
+
+#### Usage
+
+`M665 [X<MRZP-offset>] [Y<MRZP-offset>] [Z<MRZP-offset>] [S<segments-per-second>] [I<rotational-joint-offset>] [J<rotational-joint-offset>] [K<rotational-joint-offset>]`
+
+#### Parameters
+
+##### `Z<MRZP-offset>`
 
 Machine rotary zero point (MRZP) Z offset. 
 - For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Z axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
@@ -78,7 +86,7 @@ Machine rotary zero point (MRZP) Z offset.
 See `DEFAULT_MRZP_OFFSET_Z` and these references:
 https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S257.html
 
-#### M665 X
+##### `X<MRZP-offset>`
 
 Machine rotary zero point (MRZP) X offset.
 For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the X axis from machine zero point tothe center of rotation. The center of rotation is usually the center of the top surface of the table.
@@ -86,7 +94,7 @@ For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes X
 See `DEFAULT_MRZP_OFFSET_X` and these references:
 - https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S255.html
 
-#### M665 Y
+##### `Y<MRZP-offset>`
 
 Machine rotary zero point (MRZP) Y offset. 
 For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Y axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
@@ -95,26 +103,47 @@ For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the
 See these references:
 - https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S256.html
 
-#### M665 I
+##### `I<rotational-joint-offset>`
 
 For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZBC axes this is the x offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table.
 
 See `DEFAULT_ROTATIONAL_OFFSET_X` and `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
-#### M665 J
+##### `J<rotational-joint-offset>`
 
 For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZAC axes this is the y offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table.
 
 See `DEFAULT_ROTATIONAL_OFFSET_Y` and `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
-#### M665 K
+##### `K<rotational-joint-offset>`
 
 For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) this is the Z offset between the horizontal centerline of the joint that tilts the table and the surface at the top of the horizontal table.
 
 See `DEFAULT_ROTATIONAL_OFFSET_Z` and `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
+
+
+### M541 (Endstops Abort)
+
+Set whether SD printing should abort in the event of any endstop being triggered. This provides a fast way to abort a print in the event of mechanical failure such as loose couplings, lost steps, diverted axes, binding, etc., which lead to axes being very far out of position.
+
+#### Notes
+
+Requires `ABORT_ON_SOFTWARE_ENDSTOP`.
+
+Use `ENDSTOPS_ALWAYS_ON_DEFAULT` or `M120` to ensure that endstops are enabled.
+
+#### Usage
+
+`M541 S<flag>`
+
+#### Parameters
+
+##### `S<flag>`
+
+Whether (1) or not (0) to abort printing on software endstop hit.
 
 
 ## Configuration
@@ -127,23 +156,15 @@ to:
 
 `#define I_DRIVER_TYPE A4988`
 
-Important options are:
+The following is a list of options in Marlin2ForPipetBot that are relevant for machines with more than three axes or that deviate from those of MarlinFirmware/Marlin:
 
 ### `X_DRIVER_TYPE`
 
 `X_DRIVER_TYPE`, `Y_DRIVER_TYPE`, `Z_DRIVER_TYPE`, `I_DRIVER_TYPE`, `J_DRIVER_TYPE`, `K_DRIVER_TYPE`, `U_DRIVER_TYPE`, `V_DRIVER_TYPE`, `W_DRIVER_TYPE`: These settings allow Marlin to tune stepper driver timing and enable advanced options for stepper drivers that support them. You may also override timing options in Configuration_adv.h.
  
 Use TMC2208/TMC2208_STANDALONE for TMC2225 drivers and TMC2209/TMC2209_STANDALONE for TMC2226 drivers.
- 
- Options: A4988, A5984, DRV8825, LV8729, L6470, L6474, POWERSTEP01,
-          TB6560, TB6600, TMC2100,
-          TMC2130, TMC2130_STANDALONE, TMC2160, TMC2160_STANDALONE,
-          TMC2208, TMC2208_STANDALONE, TMC2209, TMC2209_STANDALONE,
-          TMC26X,  TMC26X_STANDALONE,  TMC2660, TMC2660_STANDALONE,
-          TMC5130, TMC5130_STANDALONE, TMC5160, TMC5160_STANDALONE
 
-These settings allow Marlin to tune stepper driver timing and enable advanced options for stepper drivers that support them. 
-You may also override timing options in Configuration_adv.h. Each driver is associated with an axis (internal axis identifiers: 
+Each driver is associated with an axis (internal axis identifiers: 
 X, Y, Z, I, J, K, U, V, W) or an extruder (E0 to E7). 
 Each axis gets its own stepper control and endstops depending on the following settings:
 `[[I, [J, [K...]]]_STEP_PIN`, `[I, [J, [K...]]]_ENABLE_PIN`, `[I, [J, [K...]]]_DIR_PIN`,
