@@ -79,7 +79,7 @@ Configure `PENTA_AXIS_TRT` and `PENTA_AXIS_HT` geometry values.
 
 ##### `Z<MRZP-offset>`
 
-Machine rotary zero point (MRZP) Z offset. 
+Set the machine rotary zero point (MRZP) Z offset. 
 - For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Z axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
 - For 5 axis CNC machines in head-table configuration (PENTA_AXIS_HT) this is the distance along the Z axis from the machine zero point to the horizontal centerline of the joint that tilts the tool head when all axes are in 0 position. 
 
@@ -88,15 +88,15 @@ https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S
 
 ##### `X<MRZP-offset>`
 
-Machine rotary zero point (MRZP) X offset.
-For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the X axis from machine zero point tothe center of rotation. The center of rotation is usually the center of the top surface of the table.
+Set the machine rotary zero point (MRZP) X offset.
+For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the X axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
 
 See `DEFAULT_MRZP_OFFSET_X` and these references:
 - https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S255.html
 
 ##### `Y<MRZP-offset>`
 
-Machine rotary zero point (MRZP) Y offset. 
+Set the machine rotary zero point (MRZP) Y offset. 
 For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Y axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
 
 
@@ -105,21 +105,21 @@ See these references:
 
 ##### `I<rotational-joint-offset>`
 
-For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZBC axes this is the x offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table.
+Set the rotational joint X offset. For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZBC axes this is the x offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint that rotates the table.
 
 See `DEFAULT_ROTATIONAL_OFFSET_X` and `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
 ##### `J<rotational-joint-offset>`
 
-For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZAC axes this is the y offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table.
+Set the rotational joint Y offset. For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZAC axes this is the y offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint that rotates the table.
 
 See `DEFAULT_ROTATIONAL_OFFSET_Y` and `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
 ##### `K<rotational-joint-offset>`
 
-For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) this is the Z offset between the horizontal centerline of the joint that tilts the table and the surface at the top of the horizontal table.
+Set the rotational joint Z offset. For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) this is the Z offset between the horizontal centerline of the joint that tilts the table and the surface at the top of the table.
 
 See `DEFAULT_ROTATIONAL_OFFSET_Z` and `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
@@ -127,7 +127,7 @@ See `DEFAULT_ROTATIONAL_OFFSET_Z` and `Dx`, `Dy` and `Dz` in sections "5.3. Tran
 
 ### M541 (Endstops Abort)
 
-Set whether SD printing should abort in the event of any endstop being triggered. This provides a fast way to abort a print in the event of mechanical failure such as loose couplings, lost steps, diverted axes, binding, etc., which lead to axes being very far out of position.
+Set whether printing should abort in the event of any software endstop being triggered. This provides a fast way to abort a print in the event of mechanical failure such as loose couplings, lost steps, diverted axes, binding, etc., which lead to axes being very far out of position.
 
 #### Notes
 
