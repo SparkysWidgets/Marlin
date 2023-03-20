@@ -406,7 +406,7 @@ Marlin is constantly improving thanks to a huge number of contributors from all 
 
 Marlin2ForPipetBot (https://github.com/DerAndere1/Marlin)
 
-Copyright 2022 DerAndere
+Copyright 2023 DerAndere
 
 Marlin2ForPipetBot is modified by:
 
