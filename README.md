@@ -7,7 +7,7 @@ For multi-axis CNC machines and lab robots (liquid handling robots, "pipetting r
 Marlin supports up to nine non-extruder axes plus extruders (e.g. XYZABCUVW+E or XYZABCW+E or XYZCUVW+E or XYZABC+E or XYZUVW+E). 
 
 ## G-code
-The G-code syntax of Marlin2ForPipetBot closely resembles that of LinuxCNC. Here is a list of G-codes that deviated in official MarlinFirmware/Marlin and that are brought more in line with LinuxCNC syntax:
+The G-code syntax of Marlin2ForPipetBot closely resembles that of LinuxCNC (the successor of NIST RS274NGC interpreter - version 3). Here is a list of G-codes that deviated in official MarlinFirmware/Marlin and that are brought more in line with LinuxCNC syntax:
 - F (feedrate for G0, G1, G2, G3, G4, G5)
 - G10 (set offsets)
 - G43 (simple tool length compensation)
@@ -18,21 +18,35 @@ New G-codes:
 
 ### G1 (Linear Move)
 
+
+#### Usage
+
 Example syntax for movement (G-code G1) with 9 axes plus extruder (default axis names: XYZABCUVW+E): 
 ```
 G1 [Xx.xxxx] [Yy.yyyy] [Zz.zzzz] [Aa.aaaa] [Bb.bbbb] [Cc.cccc] [Uu.uuuu] [Vv.vvvv] [Ww.wwww] [Ee.eeee] [Ff.ffff]
 ```
-Parameters:
 
-`X`, `Y`, `Z`: position in the cartesian coordinate system consisting of primary linear axes X, Y and Z. Unit: mm (after G-code G21) or imperial inch (after G-code G20)
+#### Parameters:
 
-`A`, `B`, `C`: angular position in the pseudo-cartesian coordinate system consisting of rotational axes A, B, and C that are collinear with axes X, Y and Z, respectively. Unit: degrees
+##### `X`, `Y`, `Z`
 
-`U`, `V`, `W`: position in the cartesian coordinate system consisting of secondary linear axes U, V and W that are collinear with axes X, Y and Z. Unit: mm (after G-code G21) or imperial inch (after G-code G20)
+Position in the cartesian coordinate system consisting of primary linear axes X, Y and Z. Unit: mm (after G-code G21) or imperial inch (after G-code G20)
 
-`E`: distance the E stepper should move. Unit: mm (after G-code G21) or imperial inch (after G-code G20)
+##### `A`, `B`, `C`
 
-`F`: Feedrate as defined by LinuxCNC (extension of NIST RS274NGC interpreter - version 3):
+Angular position in the pseudo-cartesian coordinate system consisting of rotational axes A, B, and C that are collinear with axes X, Y and Z, respectively. Unit: degrees
+
+##### `U`, `V`, `W`
+
+Position in the cartesian coordinate system consisting of secondary linear axes U, V and W that are collinear with axes X, Y and Z. Unit: mm (after G-code G21) or imperial inch (after G-code G20)
+
+##### `E`
+
+Distance the E stepper should move. Unit: mm (after G-code G21) or imperial inch (after G-code G20)
+
+##### `F`
+
+Feedrate as defined by LinuxCNC (extension of NIST RS274NGC interpreter - version 3):
 
 - For motion involving one or more of the X, Y, and Z axes (with or without motion of other axes), the feed rate means length units per minute along the programmed XYZ path, as if the other axes were not moving.
 - For motion involving one or more of the secondary linear axes (axis names 'U', 'V', or 'W') with the X, Y , and Z axes not moving (with or without motion of rotational axes), the feed rate means length units per minute along the programmed UVW path (using the usual Euclidean metric in the UVW coordinate system), as if the rotational axes were not moving.
@@ -53,12 +67,16 @@ Set offsets. See the following references:
 Enable simple tool length compensation. See the following references:
 - https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G43
 
+No `H` word is required. The offsets for the current tool are applied. 
+
 
 ### G43.4 (Tool centerpoint control)
 
 Enable tool centerpoint control. See the following references:
 - https://www.linkedin.com/pulse/g434-tool-center-point-control-tcp-abhilash-am?trk=read_related_article-card_title
 - https://www.haascnc.com/service/codes-settings.type=gcode.machine=mill.value=G234.html
+
+No `H` word is required. The offsets for the current tool are applied.
 
 ### G49 (Cancel tool length compensatiion)
 
