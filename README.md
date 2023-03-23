@@ -67,8 +67,8 @@ Set offsets. See the following references:
 Enable simple tool length compensation. See the following references:
 - https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G43
 
-No `H` word is required. The offsets for the current tool are applied. 
-
+#### Notes
+Currently, no `H` word is supported. The tool offsets (set by G10) for the current tool are applied.
 
 ### G43.4 (Tool centerpoint control)
 
@@ -76,7 +76,8 @@ Enable tool centerpoint control. See the following references:
 - https://www.linkedin.com/pulse/g434-tool-center-point-control-tcp-abhilash-am?trk=read_related_article-card_title
 - https://www.haascnc.com/service/codes-settings.type=gcode.machine=mill.value=G234.html
 
-No `H` word is required. The offsets for the current tool are applied.
+#### Notes
+Currently, no `H` word is supported. The tool offsets (set by G10) for the current tool are applied.
 
 ### G49 (Cancel tool length compensatiion)
 
@@ -84,6 +85,39 @@ Disable tool length compensation (G43) and disable tool centerpoint control (G43
 - https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G43
 - https://www.haascnc.com/service/codes-settings.type=gcode.machine=mill.value=G49.html
 
+
+### G81 (Drilling cycle)
+
+Drilling cycle. See the following references:
+- https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G81-Drilling-Cycle
+
+#### Notes
+- Requires `DRILLING_CANNED_CYCLES`
+- Currently, no `L` word (repeat cycle) is supported.
+- Currently, only OLD_Z retract mode (G98) is supported.
+- Currently, this only works when the XY plane (G17) is active
+
+### G82 (Drilling cycle, dwell)
+
+Drilling cycle with a dwell. See the following references:
+- https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G82-Drilling-Dwell
+
+#### Notes
+- Requires `DRILLING_CANNED_CYCLES`
+- Currently, no `L` word (repeat cycle) is supported.
+- Currently, only OLD_Z retract mode (G98) is supported.
+- Currently, this only works when the XY plane (G17) is active
+
+### G83 (Peck Drilling Cycle)
+
+Peck drilling cycle. See the following references:
+- https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G83-Drilling-Peck
+
+#### Notes
+- Requires `DRILLING_CANNED_CYCLES`
+- Currently, no `L` word (repeat cycle) is supported.
+- Currently, only OLD_Z retract mode (G98) is supported.
+- Currently, this only works when the XY plane (G17) is active
 
 ### M665 (PENTA_AXIS configuration)
 
@@ -305,14 +339,17 @@ Required for multi-axis machines (`I_DRIVER_TYPE` ... defined).
 Values must be chosen so that the bed is oriented horizontally and so that the Z-probe is oriented vertically.
 Note: If inverse kinematics for your machine are not implemented, bed leveling produces wrong results for all moves where the bed is not oriented horizontally or where the tool head is not oriented vertically. In these cases, bed leveling must be disabled.
 
-### LCD_SHOW_SECONDARY_AXES
+### `LCD_SHOW_SECONDARY_AXES`
 
 Show the position of secondary axes I[J[K]] instead of icons on an DOGM LCD (e.g. REPRAP_FULL_GRAPHICS_DISPLAY).
 
-### QUICK_HOME_ALL_NON_Z_AXES
+### `QUICK_HOME_ALL_NON_Z_AXES`
 
 If all axes are homed, first raise Z, then move all axes except Z simultaneously to their home position. Once the first axis reaches its home position, the axes will be homed individually in sequence XYZIJKUVW. Requires `QUICK_HOME`.
 
+### `DRILLING_CANNED_CYCLES`
+
+Enables support for G81, G82, G83 drilling canned cycles.
 
 ## Marlin2ForPipetBot Branch
 

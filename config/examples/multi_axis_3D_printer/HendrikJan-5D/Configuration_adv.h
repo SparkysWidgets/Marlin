@@ -3797,6 +3797,14 @@
 //#define CNC_COORDINATE_SYSTEMS
 
 /**
+ * Drilling canned cycles
+ * 
+ * Enables G81, G82, G83 canned cycles for drilling
+ * 
+ */
+//#define DRILLING_CANNED_CYCLES
+
+/**
  * Auto-report fan speed with M123 S<seconds>
  * Requires fans with tachometer pins
  */
