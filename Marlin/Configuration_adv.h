@@ -3621,6 +3621,14 @@
 //#define AUTO_REPORT_FANS
 
 /**
+ * Drilling canned cycles
+ * 
+ * Enables G81, G82, G83 for CNC Drilling
+ * 
+ */
+//#define DRILLING_CANNED_CYCLES
+
+/**
  * Auto-report temperatures with M155 S<seconds>
  */
 #define AUTO_REPORT_TEMPERATURES
