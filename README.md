@@ -8,10 +8,11 @@ Marlin supports up to nine non-extruder axes plus extruders (e.g. XYZABCUVW+E or
 
 ## G-code
 The G-code syntax of Marlin2ForPipetBot closely resembles that of LinuxCNC (the successor of NIST RS274NGC interpreter - version 3). Here is a list of G-codes that deviated in official MarlinFirmware/Marlin and that are brought more in line with LinuxCNC syntax:
-- F (feedrate for G0, G1, G2, G3, G4, G5)
+- F (feedrate for G0, G1, G2, G3, G4, G5, G81, G82, G83)
 - G10 (set offsets)
 - G43 (simple tool length compensation)
 - G49 (cancel tool length compensation and cancel tool centerpoint control)
+- G81, G82, G83 (drilling canned cycles)
 
 New G-codes:
 - G43.4 (tool centerpoint control)

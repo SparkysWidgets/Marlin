@@ -1,6 +1,10 @@
 /**
+ * Marlin2ForPipetBot [https://github.com/DerAndere1/Marlin]
+ * Copyright 2019 - 2023 DerAndere and other Marlin2ForPipetBot authors [https://github.com/DerAndere1/Marlin]
+ *
+ * Based on:
  * Marlin 3D Printer Firmware
- * Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -18,6 +22,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
+ */
+
+/**
+ * @file G81_G83.cpp
+ * @author DerAndere
+ * @brief Canned cycles for drilling.
+ *
+ * Copyright 2023 DerAndere
+ *
+ * Based on the file G81_G83.cpp from MarlinFirmware/Marlin (https://github.com/MarlinFirmware/Marlin/pull/14225)
+ * Copyright 2021 MarlinFirmware
+ * 
+ * Based on the file G81_G83.cpp from FNeo31/Marlin (https://github.com/MarlinFirmware/Marlin/pull/17283)
+ * Copyright 2019 FNeo31
+ * Author: FNeo31
  */
 
 #include "../../inc/MarlinConfig.h"
@@ -78,7 +97,7 @@ void GcodeSuite::G81() {
 
   // Rapid move to Z retract height, if provided
   if (parser.seenval('R')) {
-    retract_z = LOGICAL_TO_NATIVE(parser.value_float(), Z_AXIS);
+    retract_z = LOGICAL_TO_NATIVE(parser.value_linear_units(), Z_AXIS);
     line_to_z(retract_z, fast_feedrate);
   }
 
@@ -135,13 +154,13 @@ void GcodeSuite::G81() {
 
   float zval = 0;
   if (parser.seenval('Z')) {
-    zval = parser.value_float();
+    zval = parser.value_linear_units();
     DEBUG_ECHOLNPGM("Z", zval);
   }
 
   float rval = 0;
   if (parser.seenval('R')) {
-    rval = parser.value_float();
+    rval = parser.value_linear_units();
     DEBUG_ECHOLNPGM("R", rval);
   }
 
@@ -188,13 +207,13 @@ void GcodeSuite::G82() {
 
   float zval = 0;
   if (parser.seenval('Z')) {
-    zval = parser.value_float();
+    zval = parser.value_linear_units();
     DEBUG_ECHOLNPGM("Z", zval);
   }
 
   float rval = 0;
   if (parser.seenval('R')) {
-    rval = parser.value_float();
+    rval = parser.value_linear_units();
     DEBUG_ECHOLNPGM("R", rval);
   }
 
@@ -248,19 +267,19 @@ void GcodeSuite::G83() {
 
   float zval = 0;
   if (parser.seenval('Z')) {
-    zval = parser.value_float();
+    zval = parser.value_linear_units();
     DEBUG_ECHOLNPGM("Z", zval);
   }
 
   float rval = 0;
   if (parser.seenval('R')) {
-    rval = parser.value_float();
+    rval = parser.value_linear_units();
     DEBUG_ECHOLNPGM("R", rval);
   }
 
   float qval = 0;
   if (parser.seenval('Q')) {
-    qval = parser.value_float();
+    qval = parser.value_linear_units();
     DEBUG_ECHOLNPGM("Q", qval);
   }
 
