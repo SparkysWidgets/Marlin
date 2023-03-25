@@ -3,7 +3,6 @@
 Additional documentation can be found in the repository [DerAndere1/Marlin at https://github.com](https://github.com/DerAndere1/Marlin/tree/Marlin2ForPipetBot), the [Wiki](https://github.com/DerAndere1/Marlin/wiki) or on the [PipetBot-A8 project homepage](https://derandere.gitlab.io/pipetbot-a8) that is part of the [authors homepage](https://derandere.gitlab.io). 
 For multi-axis CNC machines and lab robots (liquid handling robots, "pipetting robots"). Please test this firmware and let us know if it misbehaves in any way. Volunteers are standing by!
 
-
 Marlin supports up to nine non-extruder axes plus extruders (e.g. XYZABCUVW+E or XYZABCW+E or XYZCUVW+E or XYZABC+E or XYZUVW+E). 
 
 ## G-code
@@ -18,7 +17,6 @@ New G-codes:
 - G43.4 (tool centerpoint control)
 
 ### G1 (Linear Move)
-
 
 #### Usage
 
@@ -80,7 +78,7 @@ Enable tool centerpoint control. See the following references:
 #### Notes
 Currently, no `H` word is supported. The tool offsets (set by G10) for the current tool are applied.
 
-### G49 (Cancel tool length compensatiion)
+### G49 (Cancel tool length compensation)
 
 Disable tool length compensation (G43) and disable tool centerpoint control (G43.4). Enter direct joint control mode. See the following references:
 - https://linuxcnc.org/docs/2.6/html/gcode/gcode.html#sec:G43
@@ -137,7 +135,7 @@ Configure `PENTA_AXIS_TRT` and `PENTA_AXIS_HT` geometry values.
 
 Set the machine rotary zero point (MRZP) Z offset. 
 - For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Z axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
-- For 5 axis CNC machines in head-table configuration (PENTA_AXIS_HT) this is the distance along the Z axis from the machine zero point to the horizontal centerline of the joint that tilts the tool head when all axes are in 0 position. 
+- For 5 axis CNC machines in head-table configuration (PENTA_AXIS_HT) this is the distance along the Z axis from the machine zero point to the horizontal centerline of the joint that tilts the tool head when all axes are in zero position. 
 
 See `DEFAULT_MRZP_OFFSET_Z` and these references:
 https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S257.html
@@ -161,21 +159,21 @@ See these references:
 
 ##### `I<rotational-joint-offset>`
 
-Set the rotational joint X offset. For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZBC axes this is the x offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint that rotates the table.
+Set the rotational joint X offset. For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZBC axes this is the x offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint that rotates the table when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
 
 See `DEFAULT_ROTATIONAL_JOINT_OFFSET_X` and `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
 ##### `J<rotational-joint-offset>`
 
-Set the rotational joint Y offset. For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZAC axes this is the y offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint that rotates the table.
+Set the rotational joint Y offset. For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZAC axes this is the y offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint that rotates the table when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
 
 See `DEFAULT_ROTATIONAL_JOINT_OFFSET_Y` and `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
 ##### `K<rotational-joint-offset>`
 
-Set the rotational joint Z offset. For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) this is the Z offset between the horizontal centerline of the joint that tilts the table and the surface at the top of the table.
+Set the rotational joint Z offset. For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) this is the Z offset between the horizontal centerline of the joint that tilts the table and the surface at the top of the table when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
 
 See `DEFAULT_ROTATIONAL_JOINT_OFFSET_Z` and `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
