@@ -97,6 +97,7 @@ Drilling cycle. See the following references:
 - Currently, no `L` word (repeat cycle) is supported.
 - Currently, only OLD_Z retract mode (G98) is supported.
 - Currently, this only works when the XY plane (G17) is active
+- Usually, all rotational axes must be in neutral (zero) position so that the table is oriented horizontally and the tool is oriented vertically.
 
 ### G82 (Drilling cycle, dwell)
 
@@ -108,6 +109,7 @@ Drilling cycle with a dwell. See the following references:
 - Currently, no `L` word (repeat cycle) is supported.
 - Currently, only OLD_Z retract mode (G98) is supported.
 - Currently, this only works when the XY plane (G17) is active
+- Usually, all rotational axes must be in neutral (zero) position so that the table is oriented horizontally and the tool is oriented vertically.
 
 ### G83 (Peck Drilling Cycle)
 
@@ -119,6 +121,7 @@ Peck drilling cycle. See the following references:
 - Currently, no `L` word (repeat cycle) is supported.
 - Currently, only OLD_Z retract mode (G98) is supported.
 - Currently, this only works when the XY plane (G17) is active
+- Usually, all rotational axes must be in neutral (zero) position so that the table is oriented horizontally and the tool is oriented vertically.
 
 ### M665 (PENTA_AXIS configuration)
 

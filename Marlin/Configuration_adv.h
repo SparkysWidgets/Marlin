@@ -3626,7 +3626,7 @@
  * Enables G81, G82, G83 canned cycles for drilling
  * 
  */
-//#define CNC_DRILLING_CYCLES
+//#define DRILLING_CANNED_CYCLES
 
 /**
  * Auto-report temperatures with M155 S<seconds>
