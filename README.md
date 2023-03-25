@@ -35,11 +35,11 @@ Position in the cartesian coordinate system consisting of primary linear axes X,
 
 ##### `A`, `B`, `C`
 
-Angular position in the pseudo-cartesian coordinate system consisting of rotational axes A, B, and C that are collinear with axes X, Y and Z, respectively. Unit: degrees
+Angular position in the pseudo-cartesian coordinate system consisting of rotational axes A, B, and C that are parallel to axes X, Y and Z, respectively. Unit: degrees
 
 ##### `U`, `V`, `W`
 
-Position in the cartesian coordinate system consisting of secondary linear axes U, V and W that are collinear with axes X, Y and Z. Unit: mm (after G-code G21) or imperial inch (after G-code G20)
+Position in the cartesian coordinate system consisting of secondary linear axes U, V and W that are parallel to axes X, Y and Z. Unit: mm (after G-code G21) or imperial inch (after G-code G20)
 
 ##### `E`
 
