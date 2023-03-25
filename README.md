@@ -284,16 +284,22 @@ Machine rotary zero point (MRZP) Z offset.
 - For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Z axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
 - For 5 axis CNC machines in head-table configuration (PENTA_AXIS_HT) this is the distance along the Z axis from the machine zero point to the horizontal centerline of the joint that tilts the tool head when all axes are in zero position.
 
-See these references:
-https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S257.html
+See this reference:
+- https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S257.html
+
+Also, see the definition of the pivot point (`Pz`) in this reference: 
+- https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
 ### `DEFAULT_MRZP_OFFSET_X`
 
 Machine rotary zero point (MRZP) X offset.
 For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the X axis from machine zero point to the center of rotation when all axes are in neutral (zero) position. The center of rotation is usually the center of the top surface of the table.
 
-See these references:
+See this reference:
 - https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S255.html
+
+Also, see the definition of the pivot point (`Px`) in this reference: 
+- https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
 ### `DEFAULT_MRZP_OFFSET_Y`
 
@@ -301,14 +307,17 @@ Machine rotary zero point (MRZP) Y offset.
 - For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZAC this is the distance along the Y axis from machine zero point to the center of rotation when all axes are in neutral (zero) position. The center of rotation is usually the center of the top surface of the table.
 - For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) with axes XYZBC this is the distance along the Y axis from machine zero point to the to the center of rotation when all axes are in neutral (zero) position. The center of rotation is usually the center of the top surface of the table.
 
-See these references:
+See this reference:
 - https://www.haascnc.com/service/codes-settings.type=setting.machine=mill.value=S256.html
+
+Also, see the definition of the pivot point (`Pz`) in this reference: 
+- https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
 ### `DEFAULT_ROTATIONAL_JOINT_OFFSET_X`
 
 For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZBC axes this is the x offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint that rotates the table when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
 
-See `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
+See definition of `Dx` in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
 ### `DEFAULT_ROTATIONAL_JOINT_OFFSET_Y`
@@ -316,14 +325,14 @@ See `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machin
 For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZAC axes this is the y offset between the horizontal centerline of the joint that tilts the table and the center of rotation when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
 The center of rotation is usually the center of the top surface of the table.
 
-See `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
+See definition of `Dy` in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
 ### `DEFAULT_ROTATIONAL_JOINT_OFFSET_Z`
 
 For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) this is the Z offset between the horizontal centerline of the joint that tilts the table and the surface at the top of the table when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
 
-See `Dx`, `Dy` and `Dz` in sections "5.3. Transformations for a xyzbc-trt machine with rotary axis offsets" and "7. Custom Kinematics Components" in this reference:
+See definition of `Dz` in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
 ### `TOOLS`
