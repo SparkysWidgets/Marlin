@@ -1106,11 +1106,11 @@
   #define DEFAULT_MRZP_OFFSET_Z 0.0 // (mm)
 
   // For a machine with XYZBC axes, this is the x offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table
-  #define DEFAULT_ROTATIONAL_OFFSET_X 0.0 // (mm)
+  #define DEFAULT_ROTATIONAL_JOINT_OFFSET_X 0.0 // (mm)
   // For a machine with XYZAC axes, this is the y offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table
-  #define DEFAULT_ROTATIONAL_OFFSET_Y 0.0 // (mm)
+  #define DEFAULT_ROTATIONAL_JOINT_OFFSET_Y 0.0 // (mm)
   // This is the Z offset between the horizontal centerline of the joint that tilts the table and the surface at the top of the horizontal table
-  #define DEFAULT_ROTATIONAL_OFFSET_Z 0.0 // (mm)
+  #define DEFAULT_ROTATIONAL_JOINT_OFFSET_Z 0.0 // (mm)
 
   // Moves involving rotational axes is broken up into small straight segments (linear interpolation).
   // This is a trade-off between visible corners (not enough segments)
