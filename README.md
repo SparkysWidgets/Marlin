@@ -182,11 +182,11 @@ See `DEFAULT_ROTATIONAL_JOINT_OFFSET_Z`. Also, see definition of `Dz` in section
 
 ### M211 (Software Endstops)
 
-Set whether printing should abort in the event of any software endstop being triggered. This provides a fast way to abort a print in the event of mechanical failure such as loose couplings, lost steps, diverted axes, binding, etc., which lead to axes being very far out of position.
+Set whether printing should abort or moves should be clamped in the event of any software endstop being triggered. This provides a fast way to abort a print in the event of mechanical failure such as loose couplings, lost steps, diverted axes, binding, etc., which lead to axes being very far out of position.
 
 #### Notes
 
-- Requires `ABORT_ON_SOFTWARE_ENDSTOP`.
+- Requires `SOFTWARE_ENDSTOPS_*` for at least one axis.
 
 - Use `ENDSTOPS_ALWAYS_ON_DEFAULT` or `M120` to ensure that monitoring of limit switches is enabled.
 
@@ -202,7 +202,7 @@ Whether (1) or not (0) to enable software endstops.
 
 ##### `H<flag>`
 
-Whether (1) or not (0) to abort machining on software endstops hit.
+Whether (1) to abort machining on software endstops hit or whether to clamp moves to the software endstops (0). Requires `ABORT_ON_SOFTWARE_ENDSTOP`
 
 ## Configuration
 
