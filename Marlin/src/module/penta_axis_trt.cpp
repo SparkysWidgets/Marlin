@@ -109,7 +109,7 @@ xyz_pos_t native_to_joint(const xyz_pos_t &native) {
 
         sin_j * sin_i * pivot_length_x
       + cos_j * sin_i * pivot_length_y
-      +         cos_i * (pos->tran.z - z_rot_point)
+      +         cos_i * pivot_length_z
       -         sin_i * y_offset
       -         cos_i * z_offset
       + z_offset      
