@@ -180,26 +180,29 @@ See `DEFAULT_ROTATIONAL_JOINT_OFFSET_Z`. Also, see definition of `Dz` in section
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
 
-### M541 (Endstops Abort)
+### M211 (Software Endstops)
 
 Set whether printing should abort in the event of any software endstop being triggered. This provides a fast way to abort a print in the event of mechanical failure such as loose couplings, lost steps, diverted axes, binding, etc., which lead to axes being very far out of position.
 
 #### Notes
 
-Requires `ABORT_ON_SOFTWARE_ENDSTOP`.
+- Requires `ABORT_ON_SOFTWARE_ENDSTOP`.
 
-Use `ENDSTOPS_ALWAYS_ON_DEFAULT` or `M120` to ensure that endstops are enabled.
+- Use `ENDSTOPS_ALWAYS_ON_DEFAULT` or `M120` to ensure that monitoring of limit switches is enabled.
 
 #### Usage
 
-`M541 S<flag>`
+`M211 S<flag> H<flag>`
 
 #### Parameters
 
 ##### `S<flag>`
 
-Whether (1) or not (0) to abort printing on software endstop hit.
+Whether (1) or not (0) to enable software endstops.
 
+##### `H<flag>`
+
+Whether (1) or not (0) to abort machining on software endstops hit.
 
 ## Configuration
 
@@ -341,7 +344,7 @@ Number of tools, including extruders. Lower tool indices, starting with 0, must 
 
 ### `ABORT_ON_SOFTWARE_ENDSTOPS`
 
-Abort printing when any software endstop is triggered. This feature is enabled with 'M541 S1' or from the LCD menu.
+Abort printing when any software endstop is triggered. This feature is enabled with 'M211 H1' or from the LCD menu.
 Software endstops must be activated for this option to work.
 
 ### `SAFE_BED_LEVELING_START_X`
