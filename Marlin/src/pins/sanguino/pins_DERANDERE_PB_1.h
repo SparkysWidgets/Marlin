@@ -155,6 +155,9 @@
 #define E0_DIR_PIN                            10
 #define E0_ENABLE_PIN                         10
 
+#define E1_STEP_PIN                           10
+#define E1_DIR_PIN                            10
+#define E1_ENABLE_PIN                         10
 //
 // Temperature Sensors
 //
@@ -165,7 +168,12 @@
 #endif
 #if TEMP_SENSOR_0
   #define TEMP_0_PIN                           7  // Analog Input (pin 33 extruder)
-#elif defined(J_DRIVER_TYPE)
+#endif
+#if TEMP_SENSOR_1
+  #define TEMP_1_PIN                           7  // Analog Input (pin 33 extruder)
+#endif
+
+#if defined(J_DRIVER_TYPE)
   #define J_STOP_PIN                          24 // Same pin as Analog Input 7
 #elif defined(I_DRIVER_TYPE) && !defined(I_STOP_PIN)
   #define I_STOP_PIN                          24 // Same pin as Analog Input 7
@@ -175,6 +183,8 @@
 // Heaters / Fans
 //
 #define HEATER_0_PIN                          13  // (extruder)
+#define HEATER_1_PIN                          13  // (extruder)
+
 #define HEATER_BED_PIN                        12  // (bed)
 
 #ifndef FAN_PIN
