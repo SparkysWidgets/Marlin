@@ -71,9 +71,9 @@
  * G76  - Calibrate first layer temperature offsets. (Requires PTC_PROBE and PTC_BED)
  * G80  - Cancel current motion mode (Requires GCODE_MOTION_MODES)
  *
- * G81  - Drilling Cycles - Drilling (Requires CNC_DRILLING_CYCLE)
- * G82  - Drilling Cycles - Spot drill (Requires CNC_DRILLING_CYCLE)
- * G83  - Drilling Cycles - Pecking (Requires CNC_DRILLING_CYCLE)
+ * G81  - Drilling Cycles - Drilling (Requires DRILLING_CANNED_CYCLES)
+ * G82  - Drilling Cycles - Spot drill (Requires DRILLING_CANNED_CYCLES)
+ * G83  - Drilling Cycles - Pecking (Requires DRILLING_CANNED_CYCLES)
  *
  * G90  - Use Absolute Coordinates
  * G91  - Use Relative Coordinates
@@ -613,7 +613,7 @@ private:
     static void G80();
   #endif
 
-  #if ENABLED(CNC_DRILLING_CYCLE)
+  #if ENABLED(DRILLING_CANNED_CYCLES)
     static void G81();
     static void G82();
     static void G83();

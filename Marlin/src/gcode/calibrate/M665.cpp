@@ -218,11 +218,11 @@
     report_heading_etc(forReplay, F(STR_PAX_TRT_SETTINGS));
     SERIAL_ECHOLNPGM_P(
       PSTR("  M665 S"), LINEAR_UNIT(segments_per_second),
-      PSTR(" X"), LINEAR_UNIT(mrzp_offset_x)
-      PSTR(" Y"), LINEAR_UNIT(mrzp_offset_y)
-      PSTR(" Z"), LINEAR_UNIT(mrzp_offset_z)
-      PSTR(" I"), LINEAR_UNIT(rotational_offset_x)
-      PSTR(" J"), LINEAR_UNIT(rotational_offset_y)
+      PSTR(" X"), LINEAR_UNIT(mrzp_offset_x),
+      PSTR(" Y"), LINEAR_UNIT(mrzp_offset_y),
+      PSTR(" Z"), LINEAR_UNIT(mrzp_offset_z),
+      PSTR(" I"), LINEAR_UNIT(rotational_offset_x),
+      PSTR(" J"), LINEAR_UNIT(rotational_offset_y),
       PSTR(" K"), LINEAR_UNIT(rotational_offset_z)
     );
   }

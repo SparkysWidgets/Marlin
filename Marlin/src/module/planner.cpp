@@ -3121,6 +3121,15 @@ bool Planner::buffer_line(const xyze_pos_t &cart, const_feedRate_t fr_mm_s
     if (!hints.millimeters)
       ph.millimeters = get_move_distance(xyze_pos_t(cart_dist_mm) OPTARG(HAS_ROTATIONAL_AXES, ph.cartesian_move));
 
+    #if EITHER(PENTA_AXIS_TRT, PENTA_AXIS_HT) 
+      if (NEAR_ZERO(cart_dist_mm.i) && TERN1(HAS_J_AXIS, NEAR_ZERO(cart_dist_mm.j))) {
+        delta += cart_dist_mm;
+      }
+      else
+    #endif
+    // Cartesian XYZ to kinematic ABC, stored in global 'delta'
+    inverse_kinematics(machine);
+
     #if DISABLED(FEEDRATE_SCALING)
 
       const feedRate_t feedrate = fr_mm_s;

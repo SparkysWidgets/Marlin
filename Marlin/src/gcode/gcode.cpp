@@ -477,12 +477,6 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
         case 83: G83(); break; 
       #endif
 
-      #if ENABLED(CNC_DRILLING_CYCLE)
-        case 81: G81(); break;                                    // G81: Drill Canned Cycle
-        case 82: G82(); break;                                    // G82: Spot Drill Canned Cycle
-        case 83: G83(); break;                                    // G83: Pecking Drill Canned Cycle
-      #endif
-
       case 90: set_relative_mode(false); break;                   // G90: Absolute Mode
       case 91: set_relative_mode(true);  break;                   // G91: Relative Mode
 

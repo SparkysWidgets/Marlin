@@ -41,15 +41,15 @@
 
 #include "../../inc/MarlinConfig.h"
 
-#if ENABLED(CNC_DRILLING_CYCLE)
+#if ENABLED(DRILLING_CANNED_CYCLES)
 
 #include "../gcode.h"
 #include "../../module/motion.h"
 #include "../../MarlinCore.h"
 #include "../../module/planner.h"
 
-//#define DEBUG_CNC_DRILLING_CYCLE
-#define DEBUG_OUT ENABLED(DEBUG_CNC_DRILLING_CYCLE)
+//#define DEBUG_DRILLING_CANNED_CYCLES
+#define DEBUG_OUT ENABLED(DEBUG_DRILLING_CANNED_CYCLES)
 #include "../../core/debug_out.h"
 
 #if ENABLED(VARIABLE_G0_FEEDRATE)
@@ -313,4 +313,4 @@ void GcodeSuite::G83() {
   line_to_z(z_zero + rval, fast_feedrate);
 }
 
-#endif // CNC_DRILLING_CYCLE
+#endif // DRILLING_CANNED_CYCLES

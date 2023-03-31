@@ -57,9 +57,9 @@ float segments_per_second;
 float mrzp_offset_x;
 float mrzp_offset_y;
 float mrzp_offset_z;
-float x_offset;
-float y_offset;
-float z_offset;
+float rotational_offset_x;
+float rotational_offset_y;
+float rotational_offset_z;
 
 /**
  * 5 axis tilting rotating table inverse kinematics
@@ -81,10 +81,10 @@ xyz_pos_t native_to_joint(const xyz_pos_t &native) {
   if (!tool_centerpoint_control) return native;
 
   const float pivot_length_x = native.x - mrzp_offset_x;
-  const float pivot_length_x = native.y - mrzp_offset_y;
-  const float pivot_length_x = native.z - mrzp_offset_z;
+  const float pivot_length_y = native.y - mrzp_offset_y;
+  const float pivot_length_z = native.z - mrzp_offset_z;
 
-  const float i_rad = RADIANS(pos.i);
+  const float i_rad = RADIANS(native.i);
   const float cos_i = cos(i_rad);
   const float sin_i = sin(i_rad);
 
@@ -102,17 +102,17 @@ xyz_pos_t native_to_joint(const xyz_pos_t &native) {
         sin_j * cos_i * pivot_length_x
       + cos_j * cos_i * pivot_length_y
       -         sin_i * pivot_length_z
-      -         cos_i * y_offset
-      +         sin_i * z_offset
-      + y_offset
+      -         cos_i * rotational_offset_y
+      +         sin_i * rotational_offset_z
+      + rotational_offset_y
       + mrzp_offset_y - hotend_offset[active_extruder].y,
 
         sin_j * sin_i * pivot_length_x
       + cos_j * sin_i * pivot_length_y
       +         cos_i * pivot_length_z
-      -         sin_i * y_offset
-      -         cos_i * z_offset
-      + z_offset      
+      -         sin_i * rotational_offset_y
+      -         cos_i * rotational_offset_z
+      + rotational_offset_z      
       + mrzp_offset_z - hotend_offset[active_extruder].z,
 
         native.i,
@@ -125,9 +125,9 @@ xyz_pos_t native_to_joint(const xyz_pos_t &native) {
         cos_j * cos_i * pivot_length_x
       - sin_j * cos_i * pivot_length_y
       +         sin_i * pivot_length_z
-      -         cos_i * x_offset 
-      -         sin_i * z_offset 
-      + x_offset 
+      -         cos_i * rotational_offset_x 
+      -         sin_i * rotational_offset_z 
+      + rotational_offset_x 
       + mrzp_offset_x - hotend_offset[active_extruder].x,
 
         sin_j      * pivot_length_x
@@ -137,9 +137,9 @@ xyz_pos_t native_to_joint(const xyz_pos_t &native) {
       - cos_j * sin_i * pivot_length_x
       + sin_j * sin_i * pivot_length_y
       +         cos_i * pivot_length_z
-      -         sin_i * x_offset 
-      -         cos_i * z_offset
-      + z_offset
+      -         sin_i * rotational_offset_x 
+      -         cos_i * rotational_offset_z
+      + rotational_offset_z
       + mrzp_offset_z - hotend_offset[active_extruder].z,
 
         native.i,
@@ -147,7 +147,7 @@ xyz_pos_t native_to_joint(const xyz_pos_t &native) {
         native.j
     );
   #endif
-
+  SERIAL_ECHOLNPGM("X:", joints_pos.x);
   return joints_pos;
 }
 

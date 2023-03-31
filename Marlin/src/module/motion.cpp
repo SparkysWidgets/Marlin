@@ -1363,7 +1363,7 @@ float get_move_distance(const xyze_pos_t &diff OPTARG(HAS_ROTATIONAL_AXES, bool 
 
     #if EITHER(PENTA_AXIS_HT, PENTA_AXIS_TRT)
       // If the move is only in X/Y/Z/E don't split up the move
-      if ((!tool_centerpoint_control) || (!diff.i && TERN1(HAS_J_AXIS, !diff.j))) {
+      if ((!tool_centerpoint_control) || (NEAR_ZERO(diff.i) && TERN1(HAS_J_AXIS, NEAR_ZERO(diff.j)))) {
     #else
       // If the move is only in Z/E don't split up the move
       if (!diff.x && !diff.y) {
