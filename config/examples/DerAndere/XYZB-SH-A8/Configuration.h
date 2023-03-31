@@ -91,7 +91,7 @@
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_ANET_10
+  #define MOTHERBOARD BOARD_DERANDERE_PB_1
 #endif
 
 /**
@@ -359,7 +359,7 @@
   #define SWITCHING_TOOLHEAD_Y_POS          60         // (mm) Y position of the toolhead dock
   #define SWITCHING_TOOLHEAD_Y_SECURITY      10         // (mm) Security distance Y axis
   #define SWITCHING_TOOLHEAD_Y_CLEAR         60         // (mm) Minimum distance from dock for unobstructed X axis
-  #define SWITCHING_TOOLHEAD_X_POS          { 10, 20 , 30 }  // (mm) X positions for parking the extruders
+  #define SWITCHING_TOOLHEAD_X_POS          { 10, 20, 30 }  // (mm) X positions for parking the extruders
   #if ENABLED(SWITCHING_TOOLHEAD)
     #define SWITCHING_TOOLHEAD_SERVO_NR       0         // Index of the servo connector
     #define SWITCHING_TOOLHEAD_SERVO_ANGLES { 0, 180 }  // (degrees) Angles for Lock, Unlock
@@ -404,9 +404,9 @@
  * For the other hotends it is their distance from the extruder 0 hotend.
  * Require a value for each tool, including extruders. For machines with non-extruder TOOLS, tool 0 can be the empty tool holder so that the gauge line can be used as the reference.
  */
-#define HOTEND_OFFSET_X { 0.0, 00.00, 0.0 } // (mm) relative X-offset for each nozzle
-#define HOTEND_OFFSET_Y { 0.0, 0.00, 0.0 }  // (mm) relative Y-offset for each nozzle
-#define HOTEND_OFFSET_Z { 0.0, 20.00, 30.0 }  // (mm) relative Z-offset for each nozzle
+#define HOTEND_OFFSET_X { 0.0, 00.00, 00.00 } // (mm) relative X-offset for each nozzle
+#define HOTEND_OFFSET_Y { 0.0, 0.00, 00.00 }  // (mm) relative Y-offset for each nozzle
+#define HOTEND_OFFSET_Z { 0.0, 20.00, 30.00 }  // (mm) relative Z-offset for each nozzle
 
 // @section psu control
 
@@ -1095,15 +1095,15 @@
 // (C axis) mounted on the table.
 //#define PENTA_AXIS_TRT
 #if ENABLED(PENTA_AXIS_TRT)
-  #define TOOLS 1 // Number of tools;
+  #define TOOLS 3 // Number of tools;
 
   // Machine rotary zero point offsets  
-  // The distance along the x axis of the tilt axis centerline from the X axis 0 position
+  // The distance along the X axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
   #define DEFAULT_MRZP_OFFSET_X 0.0 // (mm)
-  // The distance along the y axis of the tilt axis centerline from the Z axis 0 position
+  // The distance along the Y axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
   #define DEFAULT_MRZP_OFFSET_Y 0.0 // (mm)
-  // The distance along the z axis of the table rotary axis (C axis) centerline from the Y axis 0 position
-  #define DEFAULT_MRZP_OFFSET_Z 0.0 // (mm)
+  // The distance along the Z axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
+  #define DEFAULT_MRZP_OFFSET_Z -240.0 // (mm)
 
   // For a machine with XYZBC axes, this is the x offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table
   #define DEFAULT_ROTATIONAL_JOINT_OFFSET_X 0.0 // (mm)
@@ -1166,7 +1166,7 @@
 //#define USE_WMIN_PLUG
 //#define USE_XMAX_PLUG
 //#define USE_YMAX_PLUG
-//#define USE_ZMAX_PLUG
+#define USE_ZMAX_PLUG
 //#define USE_IMAX_PLUG
 //#define USE_JMAX_PLUG
 //#define USE_KMAX_PLUG
@@ -1236,7 +1236,7 @@
 #define W_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
 #define X_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
 #define Y_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-#define Z_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define Z_MAX_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
 #define I_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
 #define J_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
 #define K_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
@@ -1291,7 +1291,7 @@
  * Override with M92
  *                                      X, Y, Z [, I [, J [, K...]]], E0 [, E1[, E2...]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 100, 100, 8.8, 400 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 100, 100, 400, 8.8, 400 }
 
 /**
  * Default Max Feed Rate (linear=mm/s, rotational=°/s)
@@ -1812,7 +1812,7 @@
 // :[-1,1]
 #define X_HOME_DIR -1
 #define Y_HOME_DIR -1
-#define Z_HOME_DIR -1
+#define Z_HOME_DIR 1
 #define I_HOME_DIR -1
 //#define J_HOME_DIR -1
 //#define K_HOME_DIR -1
@@ -1827,14 +1827,14 @@
 #define Y_BED_SIZE 220
 
 // Travel limits (linear=mm, rotational=°) after homing, corresponding to endstop positions.
-#define X_MIN_POS -33
-#define Y_MIN_POS -10
-#define Z_MIN_POS 0
-#define X_MAX_POS X_BED_SIZE
-#define Y_MAX_POS Y_BED_SIZE
-#define Z_MAX_POS 240
-#define I_MIN_POS 0
-#define I_MAX_POS 70
+#define X_MIN_POS -143
+#define Y_MIN_POS -120
+#define Z_MIN_POS -240
+#define X_MAX_POS 110
+#define Y_MAX_POS 110
+#define Z_MAX_POS 0
+#define I_MIN_POS -45
+#define I_MAX_POS 45
 //#define J_MIN_POS 0
 //#define J_MAX_POS 50
 //#define K_MIN_POS 0

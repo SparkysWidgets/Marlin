@@ -3613,7 +3613,7 @@
 #define CNC_COORDINATE_SYSTEMS
 
 #if ENABLED(CNC_COORDINATE_SYSTEMS)
-  #define REPORT_MACHINE_POSITION // Returns both Work and Machine coordinates in default M114 report, similar to GRBL.
+  //#define REPORT_MACHINE_POSITION // Returns both Work and Machine coordinates in default M114 report, similar to GRBL.
 #endif
 
 /**
