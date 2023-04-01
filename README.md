@@ -45,7 +45,7 @@ Distance the E stepper should move. Unit: mm (after G-code G21) or imperial inch
 
 ##### `F`
 
-Feedrate as defined by LinuxCNC (extension of NIST RS274NGC interpreter - version 3):
+Feedrate as defined by LinuxCNC:
 
 - For motion involving one or more of the X, Y, and Z axes (with or without motion of other axes), the feed rate means length units per minute along the programmed XYZ path, as if the other axes were not moving.
 - For motion involving one or more of the secondary linear axes (axis names 'U', 'V', or 'W') with the X, Y , and Z axes not moving (with or without motion of rotational axes), the feed rate means length units per minute along the programmed UVW path (using the usual Euclidean metric in the UVW coordinate system), as if the rotational axes were not moving.

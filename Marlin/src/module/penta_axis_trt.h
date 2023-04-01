@@ -57,10 +57,9 @@ extern float mrzp_offset_y;
 extern float mrzp_offset_z;
 
 // Offsets between the Centerlines of the rotational joints when all axes are at 0. 
-extern float rotational_offset_x; // For a machine with XYZBC axes, this is the x offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table
-extern float rotational_offset_y; // For a machine with XYZAC axes, this is the y offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table
-extern float rotational_offset_z; // This is the Z offset between the horizontal centerline of the joint that tilts the table and the surface at the top of the horizontal table
-
+extern float rotational_offset_x; // For a machine with XYZBC axes, this is the x offset between the centerlines of the rotational joints when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
+extern float rotational_offset_y; // For a machine with XYZAC axes, this is the y offset between the centerlines of the rotational joints when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
+extern float rotational_offset_z; // This is the Z offset between the centerlines of the rotational joints when all rotational axes are in neutral (zero) position so that the table is oriented horizontally
 /**
  * 5 axis tilting rotary table inverse kinematics
  *

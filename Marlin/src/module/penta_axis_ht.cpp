@@ -96,7 +96,7 @@ xyz_pos_t native_to_joint(const xyz_pos_t &native) {
     #endif
 
     const xyz_pos_t joints_pos = NUM_AXIS_ARRAY(
-      TERN(HAS_J_AXIS, xyr * cos(xytheta) - xb, pos.x - xb),
+      TERN(HAS_J_AXIS, xyr * cos(xytheta) + xb, pos.x + xb),
       TERN(HAS_J_AXIS, xyr * sin(xytheta), pos.y),
       pos.z + zb,
       pos.i,
