@@ -464,6 +464,25 @@ MarlinFirmware/Marlin Marlin 3D Printer Firmware (https://github.com/MarlinFirmw
 
 Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
 
+### Contributions
+
+|Author | Contact | Contribution |
+|-------|---------|--------------|
+| DerAndere | [@DerAndere1](https://github.com/DerAndere1) | main developer of multi-axis support, idea, initial implementation, added features `AXIS4_NAME`, `I_DRIVER_TYPE` ... `W_DRIVER_TYPE`, `PENTA_AXIS_HT`, `PENTA_AXIS_TRT`, `TOOLS`, `EVENT_GCODE_TOOLCHANGE_T0`, `EVENT_GCODE_TOOLCHANGE_T1`, `SAFE_BED_LEVELING_POSITION_X`, `AXIS4_ROTATES`, `FOAMCUTTER_XYUV`, `ARTICULATED_ROBOT_ARM`, `QUICK_HOME_ALL_NON_Z_AXES`, `LCD_SHOW_SECONDARY_AXES`, added commands `G10`, `G43`, `G43.4`, `G49`, bugfixes |
+| Gabriel Beraldo | [@GabrielBeraldo](https://github.com/GabrielBeraldo) | hardware debugging, bugfixes yielding first working prototype (make additional axes move, fix EEPROM) |
+| Olivier Briand | [@hobiseven](https://github.com/hobiseven) | testing, added experimental compatibility with different configurations, code review, `FOAMCUTTER_XYUV` feed rate interpretation mode |
+| Wolverine | [@MohammadSDGHN](https://github.com/MohammadSDGHN) | added experimental compatibility with different configurations (BigTreeTech SKR Pro 1.1, Trinamic TMC drivers, StealthChop, sensorless homing) |
+| bilsef | [@bilsef](https://github.com/bilsef) | testing, code review, bugfixes (fix movement of additional axes, fix types.h, fix EEPROM)|
+| FNeo31 | [@FNeo31](https://github.com/FNeo31) | added experimental drilling cyles (G81, G82, G83) |
+| HendrikJan-5D | [@HendrikJan-5D](https://github.com/HendrikJan-5D) | testing bed leveling and Trinamic TMC, bugfixes yielding first working 9 axis printer prototype |
+| Paloky | [@paloky](https://github.com/paloky) | Initial extension of multi-axis support from 6 to 8 axes |
+| Keith | [@rcKeith](https://github.com/rcKeith) | Testing of `FOAMCUTTER_XYUV` and `LCD_SHOW_SECONDARY_AXES` |
+| Phillipp Webb | [@Domush](https://github.com/Domush) | Added `CANNED_DRILLING_CYCLES`, added commands G10, G81, G82, G83 |
+| Scott Lahteine | [@thinkyhead](https://github.com/thinkyhead) | code review, refactoring | 
+| MarlinFirmware | [@MarlinFirmware](https://github.com/MarlinFirmware/Marlin) | Marlin 3D Printer firmware |
+
+
+
 ## License
 
 Marlin2ForPipetBot is published under the [GPL license](https://github.com/DerAndere1/Marlin/blob/Marlin2ForPipetBot/LICENSE) because we believe in open development. The GPL comes with both rights and obligations. Whether you use Marlin firmware as the driver for your open or closed-source product, you must keep Marlin open, and you must provide your compatible Marlin source code to end users upon request. The most straightforward way to comply with the Marlin license is to make a fork of Marlin on Github, perform your modifications, and direct users to your modified fork.
