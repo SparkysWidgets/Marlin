@@ -477,10 +477,9 @@ Copyright (c) 2021 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
 | HendrikJan-5D | [@HendrikJan-5D](https://github.com/HendrikJan-5D) | testing bed leveling and Trinamic TMC, bugfixes yielding first working 9 axis printer prototype |
 | Paloky | [@paloky](https://github.com/paloky) | Initial extension of multi-axis support from 6 to 8 axes |
 | Keith | [@rcKeith](https://github.com/rcKeith) | Testing of `FOAMCUTTER_XYUV` and `LCD_SHOW_SECONDARY_AXES` |
-| Phillipp Webb | [@Domush](https://github.com/Domush) | Added `CANNED_DRILLING_CYCLES`, added commands G10, G81, G82, G83 |
+| Phillipp Webb | [@Domush](https://github.com/Domush) | Added commands G10 L2, G10 L20 |
 | Scott Lahteine | [@thinkyhead](https://github.com/thinkyhead) | code review, refactoring | 
 | MarlinFirmware | [@MarlinFirmware](https://github.com/MarlinFirmware/Marlin) | Marlin 3D Printer firmware |
-
 
 
 ## License
