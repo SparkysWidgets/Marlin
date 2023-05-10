@@ -304,21 +304,21 @@ See the definition of the pivot point (`Pz`) in this reference:
 
 ### `DEFAULT_ROTATIONAL_JOINT_OFFSET_X`
 
-For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZBC axes this is the x offset between the centerlines of the rotational joints when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
+For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZBC axes this is the distance along the X axis from the vertical centerline of the joint of the rotary table to the horizontal centerline of the joint that tilts the table. Measured when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
 
 See definition of `Dx` in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
 ### `DEFAULT_ROTATIONAL_JOINT_OFFSET_Y`
 
-For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZAC axes this is the y offset between the centerlines of the rotational joints when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
+For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) with XYZAC axes is the distance along the Y axis from the vertical centerline of the joint of the rotary table to the horizontal centerline of the joint that tilts the table. Measured when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
 
 See definition of `Dy` in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
 
 ### `DEFAULT_ROTATIONAL_JOINT_OFFSET_Z`
 
-For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) this is the Z offset between the centerlines of the rotational joints when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
+For a 5 axis CNC machine with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Z axis from the surface at the top of the table and the horizontal centerline of the joint that tilts the table. Measured when all rotational axes are in neutral (zero) position so that the table is oriented horizontally.
 
 See definition of `Dz` in this reference:
 - https://linuxcnc.org/docs/html/motion/5-axis-kinematics.html
