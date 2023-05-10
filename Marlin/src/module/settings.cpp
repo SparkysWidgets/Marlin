@@ -3146,7 +3146,7 @@ void MarlinSettings::reset() {
         mrzp_offset_y = DEFAULT_MRZP_OFFSET_Y;
         rotational_offset_x = DEFAULT_ROTATIONAL_JOINT_OFFSET_X;
         rotational_offset_y = DEFAULT_ROTATIONAL_JOINT_OFFSET_Y;
-        rotational_offset_x = DEFAULT_ROTATIONAL_JOINT_OFFSET_Z;
+        rotational_offset_z = DEFAULT_ROTATIONAL_JOINT_OFFSET_Z;
       #endif
       mrzp_offset_z = DEFAULT_MRZP_OFFSET_Z;
     #elif ENABLED(DELTA)

@@ -1090,26 +1090,42 @@
 // Articulated robot (arm). Joints are directly mapped to axes with no kinematics.
 //#define ARTICULATED_ROBOT_ARM
 
-// For a 5 axis CNC machine in tilting rotary table configuration. 
-// This machine has a tilting table (A axis parallel to the X axis, or B axis parallel to the Y axis) and a rotary
-// (C axis) mounted on the table.
+/** 
+ * For a 5 axis CNC machine in tilting rotary table configuration. 
+ * This machine has a tilting table (A axis parallel to the X axis, or B axis parallel to the Y axis) and a
+ * rotary table (C axis).
+ */
 //#define PENTA_AXIS_TRT
 #if ENABLED(PENTA_AXIS_TRT)
   #define TOOLS 3 // Number of tools;
 
   // Machine rotary zero point offsets  
-  // The distance along the X axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
+  // The distance along the X axis from machine zero point to the center of rotation. The center of rotation is
+  // usually the center of the top surface of the table when all axes are at position 0.
   #define DEFAULT_MRZP_OFFSET_X 0.0 // (mm)
-  // The distance along the Y axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
+
+  // The distance along the Y axis from machine zero point to the center of rotation. The center of rotation is
+  // usually the center of the top surface of the table when all axes are at position 0.
+
   #define DEFAULT_MRZP_OFFSET_Y 0.0 // (mm)
-  // The distance along the Z axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
+  // The distance along the Z axis from machine zero point to the center of rotation. The center of rotation is
+  // usually the center of the top surface of the table when all axes are at position 0.
+
   #define DEFAULT_MRZP_OFFSET_Z -240.0 // (mm)
 
-  // For a machine with XYZBC axes, this is the x offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table
+  // For a machine with XYZBC axes, this is the distance along the x axis from the vertical centerline of the
+  // joint of the horizontal rotary table to the horizontal centerline of the joint that tilts the table when 
+  // all rotational axes are in neutral position so that the table is oriented horizontally.
   #define DEFAULT_ROTATIONAL_JOINT_OFFSET_X 0.0 // (mm)
-  // For a machine with XYZAC axes, this is the y offset between the horizontal centerline of the joint that tilts the table and the vertical centerline of the joint of the horizontal table
+
+  // For a machine with XYZAC axes, this is the distance along the y axis from the vertical centerline of the
+  // joint of the horizontal table to the horizontal centerline of the joint that tilts the table when all 
+  // rotational axes are in neutral position so that the table is oriented horizontally.
   #define DEFAULT_ROTATIONAL_JOINT_OFFSET_Y 0.0 // (mm)
-  // This is the Z offset between the horizontal centerline of the joint that tilts the table and the surface at the top of the horizontal table
+
+  // This is the distance along the Z axis from the surface at the top of the table and the horizontal
+  // centerline of the joint that tilts the table when all rotational axes are in neutral position so that the
+  // table is oriented horizontally.
   #define DEFAULT_ROTATIONAL_JOINT_OFFSET_Z 0.0 // (mm)
 
   // Moves involving rotational axes is broken up into small straight segments (linear interpolation).
@@ -1121,13 +1137,15 @@
   #define PRINTABLE_RADIUS 100.0    // (mm)
 #endif
 
+
 // For a 5 axis CNC machine in Head-Table configuration. 
 // This machine has a swivel head and a horizontal rotary table.
 #define PENTA_AXIS_HT
 #if ENABLED(PENTA_AXIS_HT)
   #define TOOLS 3 // Number of tools;
 
-  // Machine rotary zero point offset is the distance between the center of rotation of the B axis to the gauge line at the tool head.
+  // Machine rotary zero point offset is the distance from the gauge line at the tool head to the horizontal 
+  // centerline of the joint that tilts the tool head.
   #define DEFAULT_MRZP_OFFSET_Z 100.0 // (mm)
 
   // Moves involving rotational axes is broken up into small straight segments (linear interpolation).
