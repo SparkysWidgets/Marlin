@@ -1106,11 +1106,10 @@
 
   // The distance along the Y axis from machine zero point to the center of rotation. The center of rotation is
   // usually the center of the top surface of the table when all axes are at position 0.
-
   #define DEFAULT_MRZP_OFFSET_Y 0.0 // (mm)
+  
   // The distance along the Z axis from machine zero point to the center of rotation. The center of rotation is
   // usually the center of the top surface of the table when all axes are at position 0.
-
   #define DEFAULT_MRZP_OFFSET_Z 0.0 // (mm)
 
   // For a machine with XYZBC axes, this is the distance along the x axis from the vertical centerline of the
