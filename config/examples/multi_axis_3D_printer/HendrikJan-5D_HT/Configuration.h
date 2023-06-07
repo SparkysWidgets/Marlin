@@ -1100,7 +1100,7 @@
  * This machine has a tilting table (A axis parallel to the X axis, or B axis parallel to the Y axis) and a
  * rotary table (C axis).
  */
-//#define PENTA_AXIS_TRT
+#define PENTA_AXIS_TRT
 #if ENABLED(PENTA_AXIS_TRT)
   #define TOOLS 1 // Number of tools;
 
@@ -1143,7 +1143,7 @@
 
 // For a 5 axis CNC machine in Head-Table configuration. 
 // This machine has a swivel head and a horizontal rotary table.
-//#define PENTA_AXIS_HT
+#define PENTA_AXIS_HT
 #if ENABLED(PENTA_AXIS_HT)
   #define TOOLS 1 // Number of tools;
 
@@ -1794,7 +1794,7 @@
 #define INVERT_Y_DIR false
 #define INVERT_Z_DIR false
 #define INVERT_I_DIR true
-#define INVERT_J_DIR false
+#define INVERT_J_DIR true
 #define INVERT_K_DIR true
 #define INVERT_U_DIR false
 //#define INVERT_V_DIR false
@@ -1912,7 +1912,7 @@
    * This feature is enabled with 'M541 S1' or from the LCD menu.
    * Software endstops must be activated for this option to work.
    */
-  //#define ABORT_ON_SOFTWARE_ENDSTOP
+  #define ABORT_ON_SOFTWARE_ENDSTOP
 #endif
 
 /**
