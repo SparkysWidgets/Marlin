@@ -28,7 +28,6 @@
 
 #include "tool_change.h"
 
-#include "probe.h"
 #include "motion.h"
 #include "planner.h"
 #include "temperature.h"
@@ -38,9 +37,6 @@
 
 //#define DEBUG_TOOL_CHANGE
 //#define DEBUG_TOOLCHANGE_FILAMENT_SWAP
-
-#define DEBUG_OUT ENABLED(DEBUG_TOOL_CHANGE)
-#include "../core/debug_out.h"
 
 #if EITHER(HAS_MULTI_EXTRUDER, HAS_MULTI_TOOLS)
   toolchange_settings_t toolchange_settings;  // Initialized by settings.load()
@@ -94,6 +90,10 @@
 
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
   #include "../feature/pause.h"
+#endif
+
+#if HAS_BED_PROBE
+  #include "probe.h"
 #endif
 
 #if ENABLED(TOOLCHANGE_FILAMENT_SWAP)
@@ -155,6 +155,9 @@ void _line_to_current(const AxisEnum fr_axis, const float fscale=1) {
 }
 void slow_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.2f); }
 void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.5f); }
+
+#define DEBUG_OUT ENABLED(DEBUG_TOOL_CHANGE)
+#include "../core/debug_out.h"
 
 #if ENABLED(MAGNETIC_PARKING_EXTRUDER)
 
@@ -816,7 +819,7 @@ void fast_line_to_current(const AxisEnum fr_axis) { _line_to_current(fr_axis, 0.
 
 #endif // ELECTROMAGNETIC_SWITCHING_TOOLHEAD
 
-#if HAS_EXTRUDERS
+#if HAS_EXTRUDERS || HAS_MULTI_TOOLS
   inline void invalid_extruder_error(const uint8_t e) {
     SERIAL_ECHO_START();
     SERIAL_CHAR('T'); SERIAL_ECHO(e);

@@ -171,7 +171,7 @@
           LIST_N(SECONDARY_AXES, 1.5 * max_length(I_AXIS) * I_HOME_DIR, 1.5 * max_length(J_AXIS) * J_HOME_DIR , 1.5 * max_length(K_AXIS) * K_HOME_DIR, 1.5 * max_length(U_AXIS) * U_HOME_DIR, 1.5 * max_length(V_AXIS) * V_HOME_DIR, 1.5 * max_length(W_AXIS) * W_HOME_DIR), 
         #endif
         fr_mm_s
-        OPTARG(HAS_ROTATIONAL_AXES, fr_deg_s)
+        OPTARG(HAS_ROTATIONAL_AXES, fr_mm_s)
     );
 
     endstops.validate_homing_move();
