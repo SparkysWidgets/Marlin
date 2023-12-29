@@ -1043,6 +1043,12 @@
   #undef PID_PARAMS_PER_HOTEND
 #endif
 
+#if TOOLS
+  #if TOOLS > 1
+    #define HAS_HOTEND_OFFSET 1
+  #endif
+#endif
+
 // Helper macros for extruder and hotend arrays
 #define _EXTRUDER_LOOP(E) for (int8_t E = 0; E < EXTRUDERS; E++)
 #define EXTRUDER_LOOP() _EXTRUDER_LOOP(e)
