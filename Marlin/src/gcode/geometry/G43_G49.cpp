@@ -91,11 +91,15 @@ void GcodeSuite::G43() {
  * Rotational Tool Center Point Control Mode can be enabled with G43.4
  */
 void GcodeSuite::G49() {
-      simple_tool_length_compensation = false;
-      tool_centerpoint_control = false;
-      LOOP_NUM_AXES(i) {
-        update_workspace_offset((AxisEnum)i);
-      }
+  if (tool_centerpoint_control) {
+    current_position = current_position + hotend_offset[active_extruder];
+    sync_plan_position();
   }
+  simple_tool_length_compensation = false;
+  tool_centerpoint_control = false;
+  LOOP_NUM_AXES(i) {
+    update_workspace_offset((AxisEnum)i);
+  }
+}
 
 #endif
