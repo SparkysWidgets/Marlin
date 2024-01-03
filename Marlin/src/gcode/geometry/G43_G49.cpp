@@ -1,6 +1,6 @@
 /**
  * Marlin2ForPipetBot [https://github.com/DerAndere1/Marlin]
- * Copyright 2019 - 2023 DerAndere and other Marlin2ForPipetBot authors [https://github.com/DerAndere1/Marlin]
+ * Copyright 2019 - 2024 DerAndere and other Marlin2ForPipetBot authors [https://github.com/DerAndere1/Marlin]
  *
  * Based on:
  * Marlin 3D Printer Firmware
@@ -30,7 +30,7 @@
  * @author DerAndere
  * @brief G-codes related to Tool Length Compensation and Rotational Tool Center Point Control
  * 
- * Copyright 2023 DerAndere
+ * Copyright 2024 DerAndere
  */
 
 #include "../../inc/MarlinConfig.h"

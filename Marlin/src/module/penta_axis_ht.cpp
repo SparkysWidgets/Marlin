@@ -1,6 +1,6 @@
 /**
  * Marlin2ForPipetBot [https://github.com/DerAndere1/Marlin]
- * Copyright 2019 - 2023 DerAndere and other Marlin2ForPipetBot authors [https://github.com/DerAndere1/Marlin]
+ * Copyright 2019 - 2024 DerAndere and other Marlin2ForPipetBot authors [https://github.com/DerAndere1/Marlin]
  *
  * Based on:
  * Marlin 3D Printer Firmware
@@ -32,7 +32,7 @@
  *
  * This machine has a tilting head and a horizontal rotary table.
  *
- * Copyright 2023 DerAndere
+ * Copyright 2024 DerAndere
  *
  * Based on a relicensed verion of LinuxCNC file maxkins.c
  * Author: Chris Radek <chris@timeguy.com>
