@@ -244,7 +244,7 @@ For moves involving only rotational axes, feedrate is interpreted in angular deg
 
 `AXIS4_NAME`, `AXIS5_NAME`, `AXIS6_NAME`, `AXIS7_NAME`, `AXIS8_NAME`, `AXIS9_NAME`:
 Axis codes for additional axes:
-This defines the axis code that is used in G-code commands to reference a specific axis. Axes with name 'A', 'B' or 'C' are rotational axes for which distances and positions must be specified in degrees. Other axes are linear axes for which  distances and positions must be specified in length units (mm in default mode (after G21) or imperial inches in inch mode (after G20))
+This defines the axis code that is used in G-code commands to reference a specific axis. Conventional axis names are as follows:
    * 'A' for rotational axis parallel to X
    * 'B' for rotational axis parallel to Y
    * 'C' for rotational axis parallel to Z
@@ -280,7 +280,7 @@ Define `PENTA_AXIS_HT` kinematics for a 5 axis CNC machine in head-table configu
 ### `DEFAULT_MRZP_OFFSET_Z`
 
 Machine rotary zero point (MRZP) Z offset. 
-- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Z axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table.
+- For 5 axis CNC machines with a tilting rotary table (PENTA_AXIS_TRT) this is the distance along the Z axis from machine zero point to the center of rotation. The center of rotation is usually the center of the top surface of the table when all axes are in zero position.
 - For 5 axis CNC machines in head-table configuration (PENTA_AXIS_HT) this is the distance along the Z axis from the machine zero point to the horizontal centerline of the joint that tilts the tool head when all axes are in zero position.
 
 See the definition of the pivot point (`Pz`) in this reference: 
@@ -444,7 +444,7 @@ Marlin is constantly improving thanks to a huge number of contributors from all 
 
 Marlin2ForPipetBot (https://github.com/DerAndere1/Marlin)
 
-Copyright 2023 DerAndere
+Copyright 2024 DerAndere
 
 Marlin2ForPipetBot is modified by:
 
