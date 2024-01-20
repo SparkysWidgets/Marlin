@@ -90,7 +90,7 @@
 
 #elif ENABLED(ZONESTAR_LCD)
 
-  #define HAS_ADC_BUTTONS 1
+  //#define HAS_ADC_BUTTONS 1
   #define REPRAPWORLD_KEYPAD_MOVE_STEP 10.0
   #define ADC_KEY_NUM 8
   #define IS_ULTIPANEL 1

@@ -69,6 +69,11 @@
 //
 // Limit Switches
 //
+#define I_MIN_PIN                      P1_26  // E0DET 
+#define J_MIN_PIN                      P1_25  // E0DET
+// We will use this as the 2nd Z home Limit detection pin
+#define N2_Z_Limit_PIN                     P1_00
+
 #ifdef X_STALL_SENSITIVITY
   #define X_STOP_PIN                  X_DIAG_PIN
   #if X_HOME_TO_MIN
@@ -76,6 +81,7 @@
   #else
     #define X_MIN_PIN                      P1_26  // E0DET
   #endif
+
 #elif ENABLED(X_DUAL_ENDSTOPS)
   #ifndef X_MIN_PIN
     #define X_MIN_PIN                      P1_29  // X-STOP
@@ -176,6 +182,20 @@
   #define Z_CS_PIN                         P1_08
 #endif
 
+#define I_STEP_PIN                        P2_13
+#define I_DIR_PIN                         P0_11
+#define I_ENABLE_PIN                      P2_12
+#ifndef I_CS_PIN
+  #define I_CS_PIN                        P1_04
+#endif
+
+#define J_STEP_PIN                        P1_15
+#define J_DIR_PIN                         P1_14
+#define J_ENABLE_PIN                      P1_16
+#ifndef J_CS_PIN
+  #define J_CS_PIN                        P1_01
+#endif
+
 #define E0_STEP_PIN                        P2_13
 #define E0_DIR_PIN                         P0_11
 #define E0_ENABLE_PIN                      P2_12
@@ -241,6 +261,12 @@
 
   #define E1_SERIAL_TX_PIN                 P1_01
   #define E1_SERIAL_RX_PIN      E1_SERIAL_TX_PIN
+
+  #define I_SERIAL_TX_PIN                  P1_04
+  #define I_SERIAL_RX_PIN                  P1_04
+
+  #define J_SERIAL_TX_PIN                  P1_01
+  #define J_SERIAL_RX_PIN                  P1_01
 
   // Reduce baud rate to improve software serial reliability
   #define TMC_BAUD_RATE                    19200
